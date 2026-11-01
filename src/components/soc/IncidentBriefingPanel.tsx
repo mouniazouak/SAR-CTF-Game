@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Challenge, LevelId, FlagSubmissionResult, HintRevealResult } from '@/types/ctf';
+import { Challenge, FlagSubmissionResult, HintRevealResult } from '@/types/ctf';
 import {
   Satellite,
   Compass,
@@ -14,8 +14,6 @@ import {
   Terminal,
   Zap,
   Info,
-  Clock,
-  Layers,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
@@ -56,7 +54,6 @@ export function IncidentBriefingPanel({
 
   const logsEndRef = useRef<HTMLDivElement>(null);
 
-  // Periodically add subtle telemetry pulses to simulate active satellite downlink
   useEffect(() => {
     const messages = [
       `[DOWNLINK] Sub-aperture Doppler drift corrected: +0.02 Hz/s.`,
@@ -106,10 +103,10 @@ export function IncidentBriefingPanel({
       if (data.success) {
         soundFX.playSuccessFanfare();
         confetti({
-          particleCount: 100,
-          spread: 70,
+          particleCount: 110,
+          spread: 75,
           origin: { y: 0.6 },
-          colors: ['#00e5ff', '#10b981', '#ffffff', '#38bdf8'],
+          colors: ['#00e5ff', '#10b981', '#ffffff', '#38bdf8', '#fbbf24'],
         });
         setSubmitFeedback({
           success: true,
@@ -165,37 +162,37 @@ export function IncidentBriefingPanel({
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#080e1a] border-r border-cyan-950/80 overflow-y-auto">
+    <div className="flex flex-col h-full border-r overflow-y-auto transition-colors duration-300 dark:bg-[#080e1a] dark:border-cyan-950/80 bg-slate-50/90 border-slate-200">
       {/* Incident Header */}
-      <div className="p-4 border-b border-cyan-950/70 bg-[#0a1222]/90 sticky top-0 z-20 backdrop-blur-md">
+      <div className="p-4 border-b sticky top-0 z-20 backdrop-blur-md transition-colors duration-300 dark:bg-[#0a1222]/95 dark:border-cyan-950/70 bg-white/95 border-slate-200 shadow-sm">
         <div className="flex items-center justify-between gap-2 mb-1">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-cyan-400 bg-cyan-950/80 px-2 py-0.5 rounded border border-cyan-800/80">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded border transition-colors dark:text-cyan-400 dark:bg-cyan-950/80 dark:border-cyan-800/80 text-sky-800 bg-sky-100 border-sky-300">
             {challenge.codename} &bull; LEVEL {challenge.levelNumber}
           </span>
           <div className="flex items-center gap-1.5 text-xs font-mono">
-            <span className="text-slate-400">Current Yield:</span>
-            <span className="font-bold text-amber-300">{challenge.currentPoints} PTS</span>
+            <span className="dark:text-slate-400 text-slate-500">Yield:</span>
+            <span className="font-bold dark:text-amber-300 text-amber-700">{challenge.currentPoints} PTS</span>
           </div>
         </div>
 
-        <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+        <h2 className="text-base sm:text-lg font-bold tracking-tight dark:text-white text-slate-900">
           {challenge.title}
         </h2>
 
-        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-mono text-slate-400">
-          <span className="flex items-center gap-1 text-cyan-300">
-            <Compass className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-mono dark:text-slate-400 text-slate-600">
+          <span className="flex items-center gap-1 dark:text-cyan-300 text-sky-700 font-medium">
+            <Compass className="w-3.5 h-3.5 dark:text-cyan-400 text-sky-600" />
             {challenge.targetLocation}
           </span>
           <span>&bull;</span>
           <button
             onClick={handleCopyCoords}
             title="Click to copy target coordinates"
-            className="flex items-center gap-1 hover:text-white transition-colors bg-slate-900/80 px-1.5 py-0.5 rounded border border-slate-800"
+            className="flex items-center gap-1 transition-colors px-1.5 py-0.5 rounded border cursor-pointer dark:bg-slate-900/80 dark:border-slate-800 dark:hover:text-white bg-slate-100 border-slate-300 hover:bg-slate-200 text-slate-700"
           >
             <span>[{challenge.centerCoordinates[0].toFixed(4)}°, {challenge.centerCoordinates[1].toFixed(4)}°]</span>
-            <Copy className="w-3 h-3 text-cyan-400" />
-            {copiedCoords && <span className="text-emerald-400 text-[10px]">Copied!</span>}
+            <Copy className="w-3 h-3 dark:text-cyan-400 text-sky-600" />
+            {copiedCoords && <span className="dark:text-emerald-400 text-emerald-600 text-[10px] font-bold">Copied!</span>}
           </button>
         </div>
       </div>
@@ -203,97 +200,97 @@ export function IncidentBriefingPanel({
       <div className="p-4 space-y-4">
         {/* Solved Banner if completed */}
         {challenge.solved && (
-          <div className="p-3 rounded-lg bg-emerald-950/70 border border-emerald-500/50 flex items-start gap-3 text-emerald-200">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+          <div className="p-3 rounded-lg border flex items-start gap-3 transition-colors dark:bg-emerald-950/70 dark:border-emerald-500/50 dark:text-emerald-200 bg-emerald-50 border-emerald-300 text-emerald-800 shadow-sm">
+            <CheckCircle2 className="w-5 h-5 dark:text-emerald-400 text-emerald-600 shrink-0 mt-0.5" />
             <div className="text-xs font-mono">
-              <div className="font-bold text-emerald-300">TELEMETRY AUTHENTICATION CONFIRMED</div>
-              <p className="mt-0.5 text-slate-300">
-                Flag verified and registered on the mission ledger. You earned points for this orbital target!
+              <div className="font-bold dark:text-emerald-300 text-emerald-900">TELEMETRY AUTHENTICATION CONFIRMED</div>
+              <p className="mt-0.5 dark:text-slate-300 text-emerald-800">
+                Flag verified and registered on the orbital mission ledger. Level points awarded!
               </p>
             </div>
           </div>
         )}
 
         {/* Satellite Telemetry Card */}
-        <div className="rounded-lg bg-[#0b1626] border border-cyan-900/50 p-3 text-xs font-mono">
-          <div className="flex items-center gap-2 pb-2 mb-2 border-b border-cyan-950/80 text-cyan-400">
-            <Satellite className="w-4 h-4 text-cyan-400" />
-            <span className="font-bold tracking-wider uppercase">ORBITAL SENSOR TELEMETRY</span>
+        <div className="rounded-lg border p-3 text-xs font-mono transition-colors shadow-sm dark:bg-[#0b1626] dark:border-cyan-900/50 bg-white border-slate-200">
+          <div className="flex items-center gap-2 pb-2 mb-2 border-b dark:border-cyan-950/80 dark:text-cyan-400 border-slate-200 text-sky-700 font-bold">
+            <Satellite className="w-4 h-4 dark:text-cyan-400 text-sky-600" />
+            <span className="tracking-wider uppercase">ORBITAL SENSOR TELEMETRY</span>
           </div>
 
           <div className="grid grid-cols-2 gap-2 text-[11px]">
             <div>
-              <span className="text-slate-500">Platform:</span>
-              <div className="text-slate-200 font-semibold truncate">{challenge.satellite.mission}</div>
+              <span className="dark:text-slate-500 text-slate-400">Platform:</span>
+              <div className="dark:text-slate-200 text-slate-800 font-semibold truncate">{challenge.satellite.mission}</div>
             </div>
             <div>
-              <span className="text-slate-500">Payload:</span>
-              <div className="text-slate-200 font-semibold">{challenge.satellite.sensor}</div>
+              <span className="dark:text-slate-500 text-slate-400">Payload:</span>
+              <div className="dark:text-slate-200 text-slate-800 font-semibold">{challenge.satellite.sensor}</div>
             </div>
             <div>
-              <span className="text-slate-500">Frequency / Band:</span>
-              <div className="text-cyan-300">{challenge.satellite.frequencyGhz} GHz (λ={challenge.satellite.wavelengthCm} cm)</div>
+              <span className="dark:text-slate-500 text-slate-400">Frequency / Band:</span>
+              <div className="dark:text-cyan-300 text-sky-700 font-medium">{challenge.satellite.frequencyGhz} GHz (λ={challenge.satellite.wavelengthCm} cm)</div>
             </div>
             <div>
-              <span className="text-slate-500">Polarization:</span>
-              <div className="text-cyan-300">{challenge.satellite.polarization}</div>
+              <span className="dark:text-slate-500 text-slate-400">Polarization:</span>
+              <div className="dark:text-cyan-300 text-sky-700 font-medium">{challenge.satellite.polarization}</div>
             </div>
             <div>
-              <span className="text-slate-500">Pass Direction:</span>
-              <div className="text-slate-200">{challenge.satellite.passDirection} ({challenge.satellite.lookAngleDeg}° Inc)</div>
+              <span className="dark:text-slate-500 text-slate-400">Pass Direction:</span>
+              <div className="dark:text-slate-200 text-slate-800">{challenge.satellite.passDirection} ({challenge.satellite.lookAngleDeg}° Inc)</div>
             </div>
             <div>
-              <span className="text-slate-500">Ground Res:</span>
-              <div className="text-slate-200">{challenge.satellite.groundResolutionM}m spatial resolution</div>
+              <span className="dark:text-slate-500 text-slate-400">Ground Res:</span>
+              <div className="dark:text-slate-200 text-slate-800">{challenge.satellite.groundResolutionM}m spatial resolution</div>
             </div>
           </div>
         </div>
 
         {/* Tactical Scenario Briefing */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-slate-300">
-            <Info className="w-3.5 h-3.5 text-cyan-400" />
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5 text-xs font-mono font-bold dark:text-slate-300 text-slate-700">
+            <Info className="w-3.5 h-3.5 dark:text-cyan-400 text-sky-600" />
             <span>INCIDENT BRIEFING</span>
           </div>
-          <p className="text-xs text-slate-300 leading-relaxed bg-[#0b1424] p-3 rounded-lg border border-slate-800">
+          <p className="text-xs leading-relaxed p-3 rounded-lg border transition-colors dark:text-slate-300 dark:bg-[#0b1424] dark:border-slate-800 bg-white border-slate-200 text-slate-700 shadow-sm">
             {challenge.scenarioBriefing}
           </p>
         </div>
 
         {/* Forensic Mission Objective */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-amber-400">
-            <Zap className="w-3.5 h-3.5 text-amber-400" />
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5 text-xs font-mono font-bold dark:text-amber-400 text-amber-700">
+            <Zap className="w-3.5 h-3.5 dark:text-amber-400 text-amber-600" />
             <span>FORENSIC OBJECTIVE</span>
           </div>
-          <div className="text-xs text-amber-100/90 leading-relaxed bg-amber-950/20 p-3 rounded-lg border border-amber-900/40">
+          <div className="text-xs leading-relaxed p-3 rounded-lg border transition-colors shadow-sm dark:text-amber-100/90 dark:bg-amber-950/20 dark:border-amber-900/40 bg-amber-50/80 border-amber-200 text-amber-950">
             <p>{challenge.forensicMission}</p>
-            <div className="mt-2 pt-2 border-t border-amber-900/30 flex items-center gap-1 text-[11px] font-mono text-amber-300">
-              <span className="font-semibold text-amber-400">Clue:</span>
+            <div className="mt-2 pt-2 border-t flex items-center gap-1 text-[11px] font-mono dark:border-amber-900/30 dark:text-amber-300 border-amber-200 text-amber-800">
+              <span className="font-semibold dark:text-amber-400 text-amber-900">Clue:</span>
               <span>{challenge.targetAnomaly.samplingClue}</span>
             </div>
           </div>
         </div>
 
-        {/* Synthetic Streaming Sensor Logs */}
-        <div className="rounded-lg bg-[#050912] border border-slate-800 overflow-hidden">
+        {/* Synthetic Streaming Sensor Logs (Authentic terminal styled cleanly for both themes) */}
+        <div className="rounded-lg border overflow-hidden shadow-sm dark:bg-[#050912] dark:border-slate-800 bg-slate-900 border-slate-800 text-slate-200">
           <button
             onClick={() => setShowLogs(!showLogs)}
-            className="w-full flex items-center justify-between p-2.5 text-xs font-mono text-slate-400 hover:text-slate-200 bg-[#0a101d] border-b border-slate-800 transition-colors"
+            className="w-full flex items-center justify-between p-2.5 text-xs font-mono dark:text-slate-300 text-slate-300 bg-slate-950 border-b border-slate-800 transition-colors cursor-pointer hover:text-white"
           >
             <div className="flex items-center gap-2">
               <Terminal className="w-3.5 h-3.5 text-cyan-400" />
               <span>SYNTHETIC SENSOR TELEMETRY LOGS</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             </div>
             {showLogs ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
           </button>
 
           {showLogs && (
-            <div className="p-2.5 font-mono text-[10px] space-y-1 text-slate-400 max-h-36 overflow-y-auto">
+            <div className="p-2.5 font-mono text-[10px] space-y-1 text-slate-300 max-h-36 overflow-y-auto bg-[#070c18]">
               {sensorLogs.map((log, idx) => (
                 <div key={idx} className="leading-snug">
-                  <span className="text-cyan-500/80">&gt;</span> {log}
+                  <span className="text-cyan-400 font-bold">&gt;</span> {log}
                 </div>
               ))}
               <div ref={logsEndRef} />
@@ -304,12 +301,12 @@ export function IncidentBriefingPanel({
         {/* Tactical Hints Section */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs font-mono">
-            <span className="font-bold text-slate-300 flex items-center gap-1.5">
-              <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+            <span className="font-bold flex items-center gap-1.5 dark:text-slate-300 text-slate-700">
+              <Lightbulb className="w-3.5 h-3.5 dark:text-amber-400 text-amber-600" />
               TACTICAL HINTS ({challenge.hints.filter((h) => h.revealed).length}/{challenge.hints.length})
             </span>
-            <span className="text-[10px] text-amber-400/90 flex items-center gap-1">
-              <AlertTriangle className="w-3 h-3 text-amber-400" />
+            <span className="text-[10px] flex items-center gap-1 dark:text-amber-400/90 text-amber-700 font-medium">
+              <AlertTriangle className="w-3 h-3 dark:text-amber-400 text-amber-600" />
               -25% pts per hint
             </span>
           </div>
@@ -318,21 +315,21 @@ export function IncidentBriefingPanel({
             {challenge.hints.map((hint, idx) => (
               <div
                 key={idx}
-                className={`p-3 rounded-lg border text-xs font-mono transition-all ${
+                className={`p-3 rounded-lg border text-xs font-mono transition-all shadow-sm ${
                   hint.revealed
-                    ? 'bg-cyan-950/30 border-cyan-800/60 text-slate-300'
-                    : 'bg-[#091120] border-slate-800 text-slate-400'
+                    ? 'dark:bg-cyan-950/30 dark:border-cyan-800/60 dark:text-slate-300 bg-sky-50 border-sky-300 text-slate-800'
+                    : 'dark:bg-[#091120] dark:border-slate-800 dark:text-slate-400 bg-white border-slate-200 text-slate-600'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-cyan-300">
+                  <span className="font-semibold dark:text-cyan-300 text-sky-800">
                     Hint #{idx + 1}: {hint.title}
                   </span>
                   {!hint.revealed && (
                     <button
                       disabled={revealingHintId !== null}
                       onClick={() => handleRevealHint(idx)}
-                      className="px-2 py-1 rounded bg-amber-950/80 hover:bg-amber-900 border border-amber-600/60 text-amber-300 text-[10px] font-bold transition-colors"
+                      className="px-2 py-1 rounded border text-[10px] font-bold transition-colors cursor-pointer dark:bg-amber-950/80 dark:hover:bg-amber-900 dark:border-amber-600/60 dark:text-amber-300 bg-amber-100 hover:bg-amber-200 border-amber-400 text-amber-900 shadow-xs"
                     >
                       {revealingHintId === idx ? 'Decrypting...' : `Reveal (-${hint.penaltyPercent}%)`}
                     </button>
@@ -340,7 +337,7 @@ export function IncidentBriefingPanel({
                 </div>
 
                 {hint.revealed && hint.text && (
-                  <p className="mt-2 text-[11px] text-slate-300 leading-relaxed bg-black/30 p-2 rounded border border-cyan-950">
+                  <p className="mt-2 text-[11px] leading-relaxed p-2.5 rounded border transition-colors dark:text-slate-200 dark:bg-black/30 dark:border-cyan-950 bg-white/90 border-sky-200 text-slate-800">
                     {hint.text}
                   </p>
                 )}
@@ -350,15 +347,15 @@ export function IncidentBriefingPanel({
         </div>
 
         {/* Flag Submission Console */}
-        <div className="rounded-lg bg-[#091424] border border-cyan-800/60 p-3.5 space-y-3 shadow-lg">
+        <div className="rounded-lg border p-3.5 space-y-3 shadow-md transition-colors dark:bg-[#091424] dark:border-cyan-800/60 bg-white border-slate-300">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <span className="text-xs font-mono font-bold text-white tracking-wide uppercase">
+              <span className="w-2 h-2 rounded-full dark:bg-cyan-400 bg-sky-600 animate-pulse" />
+              <span className="text-xs font-mono font-bold tracking-wide uppercase dark:text-white text-slate-900">
                 AUTHENTICATE TELEMETRY FLAG
               </span>
             </div>
-            <span className="text-[10px] font-mono text-cyan-400/70">
+            <span className="text-[10px] font-mono dark:text-cyan-400/70 text-sky-700">
               Syntax: flag&#123;nisar_xxxx_xxxx&#125;
             </span>
           </div>
@@ -371,7 +368,7 @@ export function IncidentBriefingPanel({
                 onChange={(e) => setFlagInput(e.target.value)}
                 placeholder="flag{nisar_...}"
                 disabled={isSubmitting || challenge.solved}
-                className="w-full bg-[#050912] border border-cyan-900 focus:border-cyan-400 rounded-md py-2 px-3 text-xs font-mono text-cyan-200 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-400 disabled:opacity-50"
+                className="w-full rounded-md py-2 px-3 text-xs font-mono focus:outline-none focus:ring-2 transition-all disabled:opacity-50 dark:bg-[#050912] dark:border dark:border-cyan-900 dark:focus:border-cyan-400 dark:text-cyan-200 dark:placeholder-slate-600 dark:focus:ring-cyan-500/40 bg-slate-50 border border-slate-300 focus:border-sky-500 text-slate-900 placeholder-slate-400 focus:ring-sky-200"
               />
             </div>
 
@@ -379,11 +376,11 @@ export function IncidentBriefingPanel({
               <button
                 type="submit"
                 disabled={isSubmitting || !flagInput.trim() || challenge.solved}
-                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-md bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-bold transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-md font-mono text-xs font-bold transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer text-white dark:bg-gradient-to-r dark:from-cyan-600 dark:to-blue-600 dark:hover:from-cyan-500 dark:hover:to-blue-500 bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-500 hover:to-blue-600 shadow-sky-600/20"
               >
                 {isSubmitting ? (
                   <>
-                    <span className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     <span>Cross-Correlating...</span>
                   </>
                 ) : challenge.solved ? (
@@ -406,14 +403,14 @@ export function IncidentBriefingPanel({
             <div
               className={`p-2.5 rounded-md text-xs font-mono flex items-start gap-2 border ${
                 submitFeedback.success
-                  ? 'bg-emerald-950/80 border-emerald-500/60 text-emerald-200'
-                  : 'bg-rose-950/80 border-rose-500/60 text-rose-200'
+                  ? 'dark:bg-emerald-950/80 dark:border-emerald-500/60 dark:text-emerald-200 bg-emerald-50 border-emerald-400 text-emerald-900'
+                  : 'dark:bg-rose-950/80 dark:border-rose-500/60 dark:text-rose-200 bg-rose-50 border-rose-300 text-rose-900'
               }`}
             >
               {submitFeedback.success ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
               ) : (
-                <XCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                <XCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
               )}
               <div className="leading-snug">{submitFeedback.message}</div>
             </div>

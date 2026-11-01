@@ -16,6 +16,36 @@ export default function ForensicWorkbenchPage() {
   const [selectedLevelId, setSelectedLevelId] = useState<LevelId>('level-0');
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  // Initialize Theme (Eye-comfort Space Theme: Deep Orbit Dark vs Orbital Daylight)
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('sar_theme') as 'dark' | 'light' | null;
+      if (savedTheme === 'light') {
+        setTheme('light');
+        document.documentElement.classList.remove('dark');
+      } else {
+        setTheme('dark');
+        document.documentElement.classList.add('dark');
+      }
+    } catch (e) {
+      // localStorage policy suppression fallback
+    }
+  }, []);
+
+  const handleToggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    try {
+      localStorage.setItem('sar_theme', nextTheme);
+      if (nextTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {}
+  };
 
   // Initialize or restore session
   const initSession = useCallback(async () => {
@@ -84,10 +114,8 @@ export default function ForensicWorkbenchPage() {
       setTotalScore(result.totalScore);
     }
 
-    // Refresh challenge states from server
     if (token) {
       fetchChallenges(token).then(() => {
-        // Automatically advance to newly unlocked level if available
         if (result.nextLevelUnlocked) {
           setSelectedLevelId(result.nextLevelUnlocked);
         }
@@ -151,24 +179,26 @@ export default function ForensicWorkbenchPage() {
 
   if (isLoading || !selectedChallenge) {
     return (
-      <div className="min-h-screen bg-[#060a12] flex flex-col items-center justify-center text-cyan-400 font-mono text-xs gap-3">
-        <div className="w-10 h-10 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen cosmic-space-bg flex flex-col items-center justify-center font-mono text-xs gap-3 p-4 transition-colors duration-300">
+        <div className="w-10 h-10 border-2 rounded-full animate-spin dark:border-cyan-400 dark:border-t-transparent border-sky-600 border-t-transparent" />
         <div className="tracking-widest uppercase text-center">
-          <p className="font-bold text-sm text-white">CALIBRATING NISAR RADAR COHERENCE...</p>
-          <p className="text-slate-500 mt-1">Connecting to Space Apps Orbital Ground Station</p>
+          <p className="font-bold text-sm dark:text-white text-slate-800">SYNCHRONIZING NISAR ORBITAL RADAR...</p>
+          <p className="dark:text-slate-400 text-slate-500 mt-1">Establishing link to Space Apps Ground Telemetry</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#060a12] text-slate-200">
+    <div className="min-h-screen flex flex-col cosmic-space-bg transition-colors duration-300 dark:text-slate-200 text-slate-800">
       {/* Navigation & Telemetry Header */}
       <Navbar
         alias={alias}
         totalScore={totalScore}
         solvedCount={solvedCount}
         totalChallenges={challenges.length}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
         onOpenLeaderboard={() => setIsLeaderboardOpen(true)}
         onResetSession={handleResetSession}
         onChangeAlias={handleChangeAlias}
@@ -184,7 +214,7 @@ export default function ForensicWorkbenchPage() {
       {/* Main Forensic Workbench Split View */}
       <main className="flex-1 grid grid-cols-1 lg:grid-cols-12 min-h-[calc(100vh-140px)]">
         {/* Left Column: Incident Briefing Panel (approx 42% on wide screens) */}
-        <div className="lg:col-span-5 h-[600px] lg:h-auto overflow-hidden">
+        <div className="lg:col-span-5 h-[620px] lg:h-auto overflow-hidden">
           <IncidentBriefingPanel
             challenge={selectedChallenge}
             token={token}
