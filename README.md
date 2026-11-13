@@ -27,6 +27,11 @@ The game implements strict progressive level unlocking: Level 0 is available imm
 | **Level 1** | `OPERATION TURIA SURGE` | Disaster Rapid Response | Turia River Basin, Valencia | Specular reflection water void ($\sigma^0 \le -22\text{ dB}$) | **100 PTS** |
 | **Level 2** | `JASPER PYRO-RADAR` | Biomass & Coherence Loss | Athabasca Valley, Jasper | Destructive canopy decorrelation ($\gamma < 0.20$) | **250 PTS** |
 | **Level 3** | `SEISMIC RIDGE INTERFEROGRAM` | InSAR Crustal Deformation | Ridgecrest Fault Zone, CA | Differential phase fringes ($\Delta r = \frac{\lambda}{2} = 12\text{ cm}$/fringe) | **500 PTS** |
+| **Level 4** | `GHOST ORBIT` | Mission Data Forensics | NISAR Ground Data Relay | Timeline, checksum, metadata, and visual evidence correlation | **1000 PTS** |
+| **Level 5** | `SILENT INVITATION` | Email Forensics | Mission Operations Mail Gateway | Identify a simulated mission-control phishing attempt | **700 PTS** |
+| **Level 6** | `CLOUD ECLIPSE` | Cloud Configuration | Earth Observation Data Archive | Find a simulated public-read policy misconfiguration | **800 PTS** |
+| **Level 7** | `NIGHT PASS` | Log Forensics | SAR Downlink Authentication Service | Reconstruct a simulated telemetry intrusion timeline | **900 PTS** |
+| **Level 8** | `LAST TRANSMISSION` | Web Integrity | Public Mission Status Portal | Compare snapshots and identify a modified mission asset | **1200 PTS** |
 
 ---
 
@@ -69,8 +74,8 @@ The game implements strict progressive level unlocking: Level 0 is available imm
 ### 1. Installation
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/dancing-with-the-sars-ctf.git
-cd dancing-with-the-sars-ctf
+git clone https://github.com/Majida-1/SAR-CTF-Game.git
+cd SAR-CTF-Game
 
 # Install dependencies
 npm install
@@ -131,6 +136,11 @@ jobs:
 | **Level 1** | Turia River Specular Flood Depression (-23.4 dB void) | `flag{nisar_flood_specular_turia}` |
 | **Level 2** | Jasper Wildfire Canopy Decorrelation ($\gamma = 0.14$) | `flag{nisar_coherence_burn_jasper}` |
 | **Level 3** | InSAR 12cm Fringe Displacement ($\lambda/2 = 12\text{ cm}$) | `flag{nisar_fault_slip_12cm_fringe}` |
+| **Level 4** | Ghost Orbit evidence correlation | `flag{nisar_sar_integrity_breach}` |
+| **Level 5** | Simulated mission-control phishing | `flag{nisar_phishing_mission_control}` |
+| **Level 6** | Simulated exposed SAR metadata archive | `flag{nisar_exposed_sar_metadata}` |
+| **Level 7** | Simulated telemetry intrusion | `flag{nisar_telemetry_intrusion_detected}` |
+| **Level 8** | Simulated mission-site defacement | `flag{nisar_mission_site_defaced}` |
 
 ---
 

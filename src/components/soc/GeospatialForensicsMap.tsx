@@ -73,30 +73,6 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
     [challenge, center, zoom]
   );
 
-  const latLngToPixel = useCallback(
-    (lat: number, lng: number, width: number, height: number): [number, number] => {
-      const { north, south, east, west } = challenge.boundingBox;
-      const latRange = north - south;
-      const lngRange = east - west;
-
-      const zoomFactor = Math.pow(1.3, zoom - challenge.defaultZoom);
-      const centerLat = center[0];
-      const centerLng = center[1];
-
-      const visibleLatSpan = latRange / zoomFactor;
-      const visibleLngSpan = lngRange / zoomFactor;
-
-      const normX = (lng - centerLng) / visibleLngSpan;
-      const normY = (centerLat - lat) / visibleLatSpan;
-
-      const pixelX = (normX + 0.5) * width;
-      const pixelY = (normY + 0.5) * height;
-
-      return [pixelX, pixelY];
-    },
-    [challenge, center, zoom]
-  );
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isDraggingSlider && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
@@ -341,21 +317,7 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
           </div>
         )}
 
-        {/* Pinpoint Anomaly Beacon Marker */}
-        {containerRef.current && (
-          <div
-            className="absolute z-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-            style={{
-              left: `${latLngToPixel(challenge.targetAnomaly.lat, challenge.targetAnomaly.lng, containerRef.current.clientWidth || 600, containerRef.current.clientHeight || 500)[0]}px`,
-              top: `${latLngToPixel(challenge.targetAnomaly.lat, challenge.targetAnomaly.lng, containerRef.current.clientWidth || 600, containerRef.current.clientHeight || 500)[1]}px`,
-            }}
-          >
-            <div className="relative flex items-center justify-center">
-              <span className="animate-ping absolute inline-flex h-12 w-12 rounded-full dark:bg-cyan-400 bg-sky-500 opacity-60"></span>
-              <span className="relative inline-flex rounded-full h-4 w-4 dark:bg-cyan-500 bg-sky-600 border-2 border-white shadow-[0_0_12px_#00ffff]"></span>
-            </div>
-          </div>
-        )}
+        {/* The anomaly location is intentionally not marked: finding it is the CTF task. */}
 
         {/* Bottom Floating Forensic Telemetry HUD */}
         <div className="absolute bottom-4 left-4 right-4 z-30 pointer-events-auto">

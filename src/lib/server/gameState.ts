@@ -5,7 +5,7 @@ import { GROUND_TRUTH_CHALLENGES, sanitizeChallengeForClient, verifyFlag } from 
 const sessions = new Map<string, PlayerSession>();
 const attemptTracker = new Map<string, { count: number; resetAt: number }>();
 
-const LEVEL_ORDER: LevelId[] = ['level-0', 'level-1', 'level-2', 'level-3'];
+const LEVEL_ORDER: LevelId[] = ['level-0', 'level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6', 'level-7', 'level-8'];
 
 // Pre-seeded competitor roster for hackathon judging demo
 const MOCK_LEADERBOARD_TEAMS: LeaderboardEntry[] = [
@@ -13,7 +13,7 @@ const MOCK_LEADERBOARD_TEAMS: LeaderboardEntry[] = [
     rank: 1,
     alias: 'JPL-RadarGhosts',
     totalScore: 900,
-    solvedLevels: ['level-0', 'level-1', 'level-2', 'level-3'],
+    solvedLevels: ['level-0', 'level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6', 'level-7', 'level-8'],
     solvedCount: 4,
     lastSolveTime: '12m ago',
     timeElapsedMinutes: 18,
@@ -98,12 +98,22 @@ export function getOrCreateSession(token?: string, requestedAlias?: string): Pla
       'level-1': [],
       'level-2': [],
       'level-3': [],
+      'level-4': [],
+      'level-5': [],
+      'level-6': [],
+      'level-7': [],
+      'level-8': [],
     },
     levelPointsAwarded: {
       'level-0': 0,
       'level-1': 0,
       'level-2': 0,
       'level-3': 0,
+      'level-4': 0,
+      'level-5': 0,
+      'level-6': 0,
+      'level-7': 0,
+      'level-8': 0,
     },
     startedAt: new Date().toISOString(),
   };
@@ -327,12 +337,22 @@ export function resetSession(session: PlayerSession): void {
     'level-1': [],
     'level-2': [],
     'level-3': [],
+    'level-4': [],
+    'level-5': [],
+    'level-6': [],
+    'level-7': [],
+    'level-8': [],
   };
   session.levelPointsAwarded = {
     'level-0': 0,
     'level-1': 0,
     'level-2': 0,
     'level-3': 0,
+    'level-4': 0,
+    'level-5': 0,
+    'level-6': 0,
+    'level-7': 0,
+    'level-8': 0,
   };
   session.startedAt = new Date().toISOString();
   session.lastSolveAt = undefined;

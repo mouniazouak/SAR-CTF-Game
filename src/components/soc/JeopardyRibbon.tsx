@@ -35,6 +35,12 @@ export function JeopardyRibbon({
         return <Flame className="w-4 h-4" />;
       case 'level-3':
         return <Activity className="w-4 h-4" />;
+      case 'level-4':
+      case 'level-5':
+      case 'level-6':
+      case 'level-7':
+      case 'level-8':
+        return <Crosshair className="w-4 h-4" />;
       default:
         return <Crosshair className="w-4 h-4" />;
     }
@@ -70,8 +76,8 @@ export function JeopardyRibbon({
           </span>
         </div>
 
-        {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        {/* Progressive mission cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {challenges.map((c) => {
             const isSelected = c.id === selectedLevelId;
             const isLocked = !c.unlocked;

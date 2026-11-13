@@ -32,6 +32,11 @@ export const ANOMALY_PROFILES: Record<LevelId, AnomalyProfile> = {
     radiusDeg: 0.040,
     targetName: 'Ridgecrest Strike-Slip Fault Rupture',
   },
+  'level-4': { centerLat: 34.8750, centerLng: -118.1600, radiusDeg: 0.018, targetName: 'Altered SAR Downlink Package' },
+  'level-5': { centerLat: 34.8800, centerLng: -118.1500, radiusDeg: 0.020, targetName: 'Suspicious Mission Email' },
+  'level-6': { centerLat: 34.8850, centerLng: -118.1450, radiusDeg: 0.020, targetName: 'Public Archive Policy' },
+  'level-7': { centerLat: 34.8900, centerLng: -118.1400, radiusDeg: 0.020, targetName: 'Anomalous Telemetry Session' },
+  'level-8': { centerLat: 34.8950, centerLng: -118.1350, radiusDeg: 0.020, targetName: 'Modified Mission Status Asset' },
 };
 
 /**
@@ -147,6 +152,25 @@ export function sampleForensics(levelId: LevelId, lat: number, lng: number): For
         confidence: isFaultTrace ? 98 : 90,
       };
     }
+
+    case 'level-4':
+    case 'level-5':
+    case 'level-6':
+    case 'level-7':
+    case 'level-8': {
+      const sigma0 = -14.0 + proximityFactor * 8.5;
+      const coherence = Math.max(0.18, 0.62 - proximityFactor * 0.32);
+      return {
+        lat: Number(lat.toFixed(5)),
+        lng: Number(lng.toFixed(5)),
+        sigma0Db: Number(sigma0.toFixed(2)),
+        coherence: Number(coherence.toFixed(2)),
+        displacementCm: 0,
+        fringeCount: 0,
+        surfaceClass: proximityFactor > 0.55 ? profile.targetName : 'Normal Mission Telemetry',
+        confidence: proximityFactor > 0.55 ? 93 : 78,
+      };
+    }
   }
 }
 
@@ -186,7 +210,7 @@ export function generateProceduralSarOverlay(levelId: LevelId): string {
           <!-- Crosshairs -->
           <line x1="285" y1="300" x2="315" y2="300" stroke="#00ffcc" stroke-width="1.5" />
           <line x1="300" y1="285" x2="300" y2="315" stroke="#00ffcc" stroke-width="1.5" />
-          <text x="315" y="290" fill="#00ffcc" font-family="monospace" font-size="12" font-weight="bold">TR-04 CAL-REFLECTOR (+24.8 dB)</text>
+          <text x="235" y="290" fill="#00ffcc" font-family="monospace" font-size="12" font-weight="bold">SAR CALIBRATION RETURN</text>
         </svg>
       `);
 
@@ -213,8 +237,8 @@ export function generateProceduralSarOverlay(levelId: LevelId): string {
                 fill="url(#floodDark)" stroke="#00e5ff" stroke-width="2" stroke-dasharray="5,3" />
           <path d="M 230 260 C 270 235, 360 250, 390 295 C 420 340, 380 390, 320 395 C 260 400, 220 340, 230 290 Z"
                 fill="#000000" opacity="0.6" />
-          <text x="240" y="335" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">SPECULAR WATER ANOMALY</text>
-          <text x="240" y="352" fill="#ef4444" font-family="monospace" font-size="11">BACKSCATTER: -23.4 dB (TURIA SURGE)</text>
+          <text x="245" y="335" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">LOW-BACKSCATTER REGION</text>
+          <text x="245" y="352" fill="#94a3b8" font-family="monospace" font-size="11">COMPARE TEMPORAL RETURNS</text>
         </svg>
       `);
 
@@ -290,8 +314,38 @@ export function generateProceduralSarOverlay(levelId: LevelId): string {
           <line x1="80" y1="120" x2="520" y2="480" stroke="#ffffff" stroke-width="3" stroke-dasharray="10,5" opacity="0.95" />
           <circle cx="300" cy="300" r="5" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
 
-          <text x="180" y="270" fill="#ffffff" font-family="monospace" font-size="12" font-weight="bold">InSAR PHASE FRINGES (λ/2 = 12cm)</text>
-          <text x="210" y="288" fill="#a855f7" font-family="monospace" font-size="11">4 CYCLES = 48cm FAULT SLIP</text>
+          <text x="190" y="270" fill="#ffffff" font-family="monospace" font-size="12" font-weight="bold">InSAR PHASE FRINGES</text>
+          <text x="230" y="288" fill="#a855f7" font-family="monospace" font-size="11">COUNT THE CYCLES</text>
+        </svg>
+      `);
+
+    case 'level-4':
+    case 'level-5':
+    case 'level-6':
+    case 'level-7':
+    case 'level-8':
+      return `data:image/svg+xml;utf8,` + encodeURIComponent(`
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="100%" height="100%">
+          <defs>
+            <filter id="forensicNoise"><feTurbulence type="fractalNoise" baseFrequency="0.55" numOctaves="3" /></filter>
+            <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07182a"/><stop offset="1" stop-color="#111827"/></linearGradient>
+          </defs>
+          <rect width="600" height="600" fill="#050a13" />
+          <rect x="34" y="38" width="532" height="524" rx="10" fill="url(#panel)" stroke="#155e75" stroke-width="2" />
+          <rect x="54" y="70" width="492" height="92" fill="#0b2538" stroke="#164e63" />
+          <text x="76" y="104" fill="#67e8f9" font-family="monospace" font-size="18" font-weight="bold">MISSION FORENSICS</text>
+          <text x="76" y="132" fill="#94a3b8" font-family="monospace" font-size="13">COMPARE TIMESTAMPS • HASHES • METADATA</text>
+          <g font-family="monospace" font-size="13">
+            <rect x="54" y="190" width="492" height="54" fill="#0b1625" stroke="#1e3a5f" />
+            <text x="74" y="222" fill="#86efac">[PASS] SAR_PACKAGE_A  trusted manifest</text>
+            <rect x="54" y="260" width="492" height="54" fill="#0b1625" stroke="#1e3a5f" />
+            <text x="74" y="292" fill="#facc15">[WARN] SAR_PACKAGE_B  compare evidence</text>
+            <rect x="54" y="330" width="492" height="54" fill="#0b1625" stroke="#1e3a5f" />
+            <text x="74" y="362" fill="#38bdf8">[INFO] REQUEST_ID 7F-21-ORBIT</text>
+            <rect x="54" y="400" width="492" height="54" fill="#0b1625" stroke="#1e3a5f" />
+            <text x="74" y="432" fill="#c4b5fd">[DATA] EVIDENCE FRAGMENT STORED</text>
+          </g>
+          <text x="160" y="510" fill="#64748b" font-family="monospace" font-size="12">NO ANSWER MARKERS — INVESTIGATE</text>
         </svg>
       `);
   }

@@ -17,7 +17,7 @@ function assert(cond, msg) {
 
 // 1. Verify Ground Truth Flags format
 const flags = Object.values(GROUND_TRUTH_CHALLENGES).map(c => c.flag);
-assert(flags.length === 4, 'All 4 levels exist in ground truth database');
+assert(flags.length === 9, 'All 9 levels exist in ground truth database');
 flags.forEach((f, idx) => {
   assert(/^flag\{nisar_[a-z0-9_]+\}$/.test(f), `Level ${idx} flag matches syntax: ${f}`);
 });
@@ -41,6 +41,8 @@ assert(challengesInitial[0].unlocked === true, 'Level 0 (Tutorial) is initially 
 assert(challengesInitial[1].unlocked === false, 'Level 1 is locked before Level 0 is solved');
 assert(challengesInitial[2].unlocked === false, 'Level 2 is locked');
 assert(challengesInitial[3].unlocked === false, 'Level 3 is locked');
+assert(challengesInitial[4].unlocked === false, 'Level 4 is locked');
+assert(challengesInitial[8].unlocked === false, 'Level 8 is locked');
 
 // Attempt to submit Level 1 before Level 0
 const prematureSubmit = submitFlag(session, 'level-1', 'flag{nisar_flood_specular_turia}');
@@ -77,13 +79,18 @@ assert(session.totalScore === 388, 'Session score updated to 388 pts');
 const solveLevel3 = submitFlag(session, 'level-3', 'flag{nisar_fault_slip_12cm_fringe}');
 assert(solveLevel3.success, 'Level 3 solved successfully (+500 pts)');
 assert(session.totalScore === 888, 'Session score updated to 888 pts');
-assert(session.solvedLevels.length === 4, 'All 4 levels recorded as completed');
+
+// Solve the new expert forensic challenge
+const solveLevel4 = submitFlag(session, 'level-4', 'flag{nisar_sar_integrity_breach}');
+assert(solveLevel4.success, 'Level 4 Ghost Orbit solved successfully (+1000 pts)');
+assert(solveLevel4.nextLevelUnlocked === 'level-5', 'Level 5 unlocked upon Level 4 completion');
+assert(session.solvedLevels.length === 5, 'First 5 levels recorded as completed');
 
 // 5. Test Leaderboard Injection
 const leaderboard = getLeaderboard(session.token);
 const playerEntry = leaderboard.find(e => e.alias === 'Test-Ghost-99');
 assert(playerEntry !== undefined, 'Player entry present in real-time leaderboard');
-assert(playerEntry.totalScore === 888, 'Leaderboard displays accurate total score');
+assert(playerEntry.totalScore === 1888, 'Leaderboard displays accurate total score');
 assert(playerEntry.isCurrentPlayer === true, 'Current player flagged in leaderboard response');
 
 // 6. Test Forensic Sampler Physics
