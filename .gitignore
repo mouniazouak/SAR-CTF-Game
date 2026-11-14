@@ -44,3 +44,4 @@ data/raw/
 .venv/
 *.swp
 data/processed/
+.ipynb_checkpoints/
