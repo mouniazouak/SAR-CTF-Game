@@ -1,0 +1,802 @@
+{
+  "meta": {
+    "campaign": "Dancing with the SARs",
+    "subtitle": "Earth Surface Incident Explorer",
+    "version": "1.0.0",
+    "totalLevels": 7,
+    "scenarioMode": "Synthetic training scenarios informed by real SAR techniques. Not operational emergency data.",
+    "arsetReference": "NASA Applied Remote Sensing Training (ARSET): SAR for Earth observation",
+    "scoring": {
+      "hintPenaltyPercent": 15,
+      "minimumScoreMultiplier": 0.25,
+      "outerRadiusMultiplier": 0.85,
+      "description": "points = round(basePoints * hintMultiplier * accuracyMultiplier). Full accuracy inside the precision radius, declining linearly to 0.85 at the tolerance edge. Each hint costs 15% of the base, with a 25% floor."
+    }
+  },
+  "levels": [
+    {
+      "id": "level-1",
+      "levelNumber": 1,
+      "title": "The Missing Flood Map",
+      "unlockRequires": null,
+      "category": "Flood Rapid Response",
+      "difficulty": "Novice",
+      "basePoints": 100,
+      "securityWrapper": {
+        "type": "Phishing",
+        "briefing": "A convincing phishing email impersonating the Loukkos Basin water authority asks you to sign in and 'restore' a missing flood map. The link leads to a credential-harvesting page. The real flood map must be rebuilt from the latest SAR pass before anyone clicks."
+      },
+      "targetLocation": "Loukkos River Basin near Larache, Morocco",
+      "regionCenter": [35.165, -6.12],
+      "defaultZoom": 11,
+      "boundingBox": {
+        "north": 35.25,
+        "south": 35.09,
+        "east": -6.0,
+        "west": -6.24
+      },
+      "satellite": {
+        "mission": "NISAR (NASA-ISRO SAR)",
+        "sensor": "L-SAR SweepSAR",
+        "frequencyGhz": 1.25,
+        "wavelengthCm": 24.0,
+        "polarization": "Dual-Pol (HH + HV)",
+        "passDirection": "Ascending",
+        "lookAngleDeg": 34.5,
+        "acquisitionDate": "2025-10-24T06:12:00Z",
+        "repeatPassDays": 12,
+        "groundResolutionM": 10.0
+      },
+      "incidentBriefing": "An extreme Mediterranean rain event has overwhelmed the Loukkos River Basin near Larache. Optical imagery is cloud-covered and the authority's public flood map is missing. NISAR's L-band SAR acquired a post-event pass through the weather system.",
+      "forensicMission": "Map the new flood extent. Compare post-event VV backscatter with a dry-season baseline, identify the connected low-backscatter flood polygon in the Loukkos floodplain, then confirm the physical driver and the correct phishing recovery action.",
+      "sarPrimer": "L-band microwaves (about 24 cm) penetrate cloud and light rain. Smooth open water reflects the pulse away from the sensor, so flooded surfaces appear dark (low sigma0) and lose coherence between passes. Wind roughening and emergent vegetation can brighten the same water, so the map must be validated with change detection.",
+      "dataProducts": [
+        "NISAR L-SAR GCOV, dual-pol HH/HV",
+        "Pre-event dry-season baseline on a 12-day repeat",
+        "Post-event VV/HV backscatter and coherence layers",
+        "Ancillary river-network and administrative boundaries"
+      ],
+      "drivers": [
+        {
+          "id": "driver-urban-double-bounce",
+          "label": "Urban double-bounce scattering",
+          "description": "Radar bounces between building walls and wet streets, returning a bright signal."
+        },
+        {
+          "id": "driver-open-water-specular",
+          "label": "Specular reflection from open floodwater",
+          "description": "A smooth water surface deflects the pulse away from the sensor, creating a dark return and low coherence."
+        },
+        {
+          "id": "driver-canopy-volume",
+          "label": "Volumetric scattering from a dense canopy",
+          "description": "Leaves and branches scatter the pulse in many directions, raising HV backscatter."
+        },
+        {
+          "id": "driver-wind-roughness",
+          "label": "Wind-driven surface roughening",
+          "description": "Waves roughen the water surface and can increase backscatter in exposed areas."
+        }
+      ],
+      "recoveryActions": [
+        {
+          "id": "recovery-block-sender",
+          "label": "Block the sender address and close the ticket",
+          "description": "Treat the phishing attempt as resolved after adding one address to a blocklist."
+        },
+        {
+          "id": "recovery-forward-email",
+          "label": "Forward the attachment to colleagues for a second opinion",
+          "description": "Ask other analysts to open the attachment and confirm whether it is legitimate."
+        },
+        {
+          "id": "recovery-quarantine-reset-mfa",
+          "label": "Quarantine the message, reset credentials, and enforce MFA",
+          "description": "Contain the phish, rotate the exposed credential from a clean device, and require multi-factor authentication."
+        },
+        {
+          "id": "recovery-legacy-auth",
+          "label": "Re-enable legacy mail authentication",
+          "description": "Restore the old sign-in path so the flood-map team can work without interruption."
+        }
+      ],
+      "hints": [
+        {
+          "id": 0,
+          "title": "Read the water signature",
+          "text": "In L-band SAR, smooth open water is dark: the pulse reflects away from the sensor. Compare pre-event and post-event VV backscatter and look for a connected low-backscatter shape that follows the floodplain, not isolated dark pixels.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 1,
+          "title": "Use the time series",
+          "text": "A flood map is a change product. Anchor on permanent water and infrastructure, then map the new low-backscatter area. Coherence loss supports the interpretation, but wind can roughen water and brighten it.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 2,
+          "title": "Find the connected extent",
+          "text": "The anomaly is a coherent flood polygon within the Loukkos floodplain, not a point target. Keep your click inside the connected low-backscatter region and avoid the urban double-bounce along the river mouth.",
+          "penaltyPercent": 15
+        }
+      ],
+      "learningObjectives": [
+        "Interpret low backscatter and coherence loss as open water in L-band SAR.",
+        "Build a pre-event and post-event flood extent change product.",
+        "Separate wind-roughened water from dry ground and urban double-bounce."
+      ]
+    },
+    {
+      "id": "level-2",
+      "levelNumber": 2,
+      "title": "Credentials in the Wetlands",
+      "unlockRequires": "level-1",
+      "category": "Wetland Time-Series Analysis",
+      "difficulty": "Novice",
+      "basePoints": 150,
+      "securityWrapper": {
+        "type": "Compromised Account",
+        "briefing": "A wetland monitoring account was reused across a public forum. An intruder used it to alter the seasonal water-cycle layer and then deleted the audit trail. The original time series must be reconstructed from SAR."
+      },
+      "targetLocation": "Merja Zerga Biological Reserve, Atlantic Morocco",
+      "regionCenter": [34.855, -6.27],
+      "defaultZoom": 12,
+      "boundingBox": {
+        "north": 34.93,
+        "south": 34.8,
+        "east": -6.19,
+        "west": -6.37
+      },
+      "satellite": {
+        "mission": "NISAR (NASA-ISRO SAR)",
+        "sensor": "L-SAR SweepSAR time series",
+        "frequencyGhz": 1.25,
+        "wavelengthCm": 24.0,
+        "polarization": "Dual-Pol (HH + HV)",
+        "passDirection": "Descending",
+        "lookAngleDeg": 36.2,
+        "acquisitionDate": "2025-11-05T18:41:00Z",
+        "repeatPassDays": 12,
+        "groundResolutionM": 10.0
+      },
+      "incidentBriefing": "Merja Zerga is a Ramsar wetland whose open-water core expands and contracts with seasonal rainfall and tidal exchange. A corrupted dashboard now shows a permanent decline. A multi-season SAR stack can separate a repeating hydroperiod from real land-cover change.",
+      "forensicMission": "Build a monthly backscatter and coherence stack, locate the lagoon core where the seasonal cycle repeats, and determine whether the change is a hydroperiod or permanent conversion. Then select the compromised-account recovery.",
+      "sarPrimer": "A wetland time series shows a repeating cycle: inundation lowers backscatter and coherence, while vegetation recovery raises coherence again. Permanent conversion does not reverse. Stacking multiple seasons is what makes the cycle visible.",
+      "dataProducts": [
+        "12-month NISAR and Sentinel-1 backscatter stack",
+        "Wet-season and dry-season coherence composites",
+        "Ramsar wetland boundary and tidal-inlet mask",
+        "Historical water-cycle dashboard export"
+      ],
+      "drivers": [
+        {
+          "id": "driver-urban-expansion",
+          "label": "Permanent urban expansion",
+          "description": "New construction replaces the wetland and does not reverse with the seasons."
+        },
+        {
+          "id": "driver-sensor-calibration",
+          "label": "Antenna calibration drift",
+          "description": "A slowly changing sensor gain shifts the backscatter record without a physical land change."
+        },
+        {
+          "id": "driver-seasonal-hydroperiod",
+          "label": "Seasonal wet-dry hydroperiod",
+          "description": "Rainfall and tidal exchange shift the water and vegetation mixture, and the signal reverses after the dry season."
+        },
+        {
+          "id": "driver-tectonic-uplift",
+          "label": "Tectonic uplift draining the wetland",
+          "description": "Crustal uplift raises the wetland floor and permanently reduces inundation."
+        }
+      ],
+      "recoveryActions": [
+        {
+          "id": "recovery-revoke-rotate-review",
+          "label": "Revoke sessions, rotate the credential, and review access logs",
+          "description": "Contain the compromised account, remove the intruder's sessions, and reconstruct what was changed."
+        },
+        {
+          "id": "recovery-share-temporary-password",
+          "label": "Share a temporary password with the reporting team",
+          "description": "Send a replacement password through the same public channel so work can continue."
+        },
+        {
+          "id": "recovery-disable-audit",
+          "label": "Disable audit logging to speed the investigation",
+          "description": "Turn off logging so the team can process the wetland archive without delays."
+        },
+        {
+          "id": "recovery-wait-expiry",
+          "label": "Wait for the compromised session to expire",
+          "description": "Take no action and rely on the session timeout to remove the intruder."
+        }
+      ],
+      "hints": [
+        {
+          "id": 0,
+          "title": "Stack the seasons",
+          "text": "Build a monthly coherence stack. A seasonal wetland should show repeating low-water and high-water phases, not a one-way change. Check whether the pattern returns in the next dry season.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 1,
+          "title": "Separate phenology from permanent loss",
+          "text": "Permanent conversion stays dark or bright across the whole record. A hydroperiod cycles with rainfall and tidal exchange. The time series, not a single scene, is the evidence.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 2,
+          "title": "Locate the lagoon core",
+          "text": "The target is the open-water core of the Merja Zerga lagoon network, away from the tidal inlet and the reed fringe. Click where the low-backscatter and coherence cycle repeats.",
+          "penaltyPercent": 15
+        }
+      ],
+      "learningObjectives": [
+        "Interpret seasonal backscatter and coherence cycles in a wetland time series.",
+        "Distinguish a reversible hydroperiod from permanent land-cover conversion.",
+        "Recognize the limits of a single-date SAR scene for wetland monitoring."
+      ]
+    },
+    {
+      "id": "level-3",
+      "levelNumber": 3,
+      "title": "The Patch That Never Arrived",
+      "unlockRequires": "level-2",
+      "category": "Wildfire Disturbance",
+      "difficulty": "Intermediate",
+      "basePoints": 200,
+      "securityWrapper": {
+        "type": "Unpatched Server",
+        "briefing": "The park's fire-monitoring server missed a critical patch. An attacker used the old vulnerability to suppress a burn-scar alert while a wildfire was still active. The SAR record is the independent witness."
+      },
+      "targetLocation": "Jasper National Park, Athabasca Valley, Alberta, Canada",
+      "regionCenter": [52.87, -118.07],
+      "defaultZoom": 12,
+      "boundingBox": {
+        "north": 52.94,
+        "south": 52.8,
+        "east": -117.96,
+        "west": -118.2
+      },
+      "satellite": {
+        "mission": "NISAR (NASA-ISRO SAR)",
+        "sensor": "L-SAR SweepSAR quad-pol",
+        "frequencyGhz": 1.25,
+        "wavelengthCm": 24.0,
+        "polarization": "Quad-Pol (HH + HV + VV + VH)",
+        "passDirection": "Ascending",
+        "lookAngleDeg": 38.4,
+        "acquisitionDate": "2025-08-02T22:04:00Z",
+        "repeatPassDays": 12,
+        "groundResolutionM": 10.0
+      },
+      "incidentBriefing": "A fast-moving wildfire burned through conifer stands in the Athabasca Valley. Smoke and pyrocumulus obscure optical sensors. Pre-fire and post-fire SAR passes show a change in canopy scattering and a collapse in coherence.",
+      "forensicMission": "Identify the connected high-severity burn perimeter, confirm the physical driver, and choose the containment-and-patch recovery. The alert must be restored before the next fire-weather window.",
+      "sarPrimer": "A healthy conifer canopy produces strong volume scattering and stable coherence. Fire removes needles and branches, lowering HV backscatter, changing the scattering mechanism, and collapsing inter-pass coherence. The burn perimeter is a connected shape that follows terrain.",
+      "dataProducts": [
+        "Pre-fire NISAR quad-pol backscatter",
+        "Post-fire VV/HV and coherence layers",
+        "Two consecutive post-fire passes for persistence",
+        "Fire-weather and terrain ancillary layers"
+      ],
+      "drivers": [
+        {
+          "id": "driver-fire-canopy-loss",
+          "label": "Fire removal of canopy volume scattering",
+          "description": "Combustion removes needles and branches, lowers HV backscatter, changes surface roughness, and destroys inter-pass coherence."
+        },
+        {
+          "id": "driver-flood-inundation",
+          "label": "Floodwater beneath the canopy",
+          "description": "Standing water under vegetation can lower coherence and change the backscatter return."
+        },
+        {
+          "id": "driver-crop-harvest",
+          "label": "A normal agricultural harvest",
+          "description": "Cutting a crop removes canopy structure and can temporarily lower backscatter."
+        },
+        {
+          "id": "driver-snow-accumulation",
+          "label": "Seasonal snow accumulation",
+          "description": "Snow cover changes surface roughness and can decorrelate the radar return."
+        }
+      ],
+      "recoveryActions": [
+        {
+          "id": "recovery-delay-patch",
+          "label": "Delay patching until after the fire season",
+          "description": "Keep the monitoring server online in its current state until the emergency is over."
+        },
+        {
+          "id": "recovery-isolate-patch-rebuild",
+          "label": "Isolate the server, apply the patch, and rebuild from a known-good image",
+          "description": "Contain the compromised host, remove persistence, patch the vulnerability, and restore a trusted monitoring stack."
+        },
+        {
+          "id": "recovery-open-management-port",
+          "label": "Expose the management port for remote triage",
+          "description": "Make the server easier to reach from outside the park network while the incident is active."
+        },
+        {
+          "id": "recovery-disable-logging",
+          "label": "Disable logging to reduce disk pressure",
+          "description": "Turn off event logging so the monitoring service can keep running."
+        }
+      ],
+      "hints": [
+        {
+          "id": 0,
+          "title": "Compare pre-fire and post-fire",
+          "text": "Use VV and HV. Healthy conifer canopy has strong volume scattering; fire removes needles and branches, so HV drops and the surface becomes rougher and less coherent.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 1,
+          "title": "Follow the scar shape",
+          "text": "A burn scar is a connected, edge-defined patch that follows terrain and wind-driven burn patterns. It is not a perfect circle or a single bright pixel.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 2,
+          "title": "Check persistence",
+          "text": "The disturbance should persist across the next pass. A cloud shadow or transient moisture change will not leave the same coherence and backscatter signature.",
+          "penaltyPercent": 15
+        }
+      ],
+      "learningObjectives": [
+        "Relate wildfire canopy loss to HV backscatter and coherence collapse.",
+        "Map a connected burn perimeter across consecutive post-fire passes.",
+        "Separate fire disturbance from flood, harvest, and snow effects."
+      ]
+    },
+    {
+      "id": "level-4",
+      "levelNumber": 4,
+      "title": "The Tampered Update",
+      "unlockRequires": "level-3",
+      "category": "Agricultural Validation",
+      "difficulty": "Intermediate",
+      "basePoints": 250,
+      "securityWrapper": {
+        "type": "Supply Chain",
+        "briefing": "A tampered software update for the irrigation advisory system arrived with a valid-looking filename but an unsigned payload. It changed the crop-alert thresholds. The field evidence must be re-validated from SAR before the advisory is reissued."
+      },
+      "targetLocation": "Nile Delta field blocks near Kafr El-Sheikh, Egypt",
+      "regionCenter": [31.1, 30.93],
+      "defaultZoom": 12,
+      "boundingBox": {
+        "north": 31.19,
+        "south": 31.02,
+        "east": 31.03,
+        "west": 30.85
+      },
+      "satellite": {
+        "mission": "Sentinel-1C (ESA Copernicus)",
+        "sensor": "C-SAR TOPS IW GRD",
+        "frequencyGhz": 5.405,
+        "wavelengthCm": 5.55,
+        "polarization": "Dual-Pol (VV + VH)",
+        "passDirection": "Descending",
+        "lookAngleDeg": 38.9,
+        "acquisitionDate": "2025-07-18T04:22:00Z",
+        "repeatPassDays": 12,
+        "groundResolutionM": 10.0
+      },
+      "incidentBriefing": "A crop-loss alert claims a large block in the Nile Delta has failed. Sentinel-1 C-band backscatter shows a change, but the timing overlaps with normal crop rotation and an irrigation pulse. The alert must be separated from a transient soil-moisture effect.",
+      "forensicMission": "Compare VV/VH and the next pass, locate the reversible field block, identify the true physical driver, and select the signed-update rollback. The advisory must be corrected without overstating crop loss.",
+      "sarPrimer": "C-band backscatter is sensitive to canopy structure and soil moisture. Wet soil raises the dielectric constant and can brighten or darken a field depending on geometry. Crop rotation changes the VV/VH ratio over weeks, while irrigation effects usually reverse after drainage.",
+      "dataProducts": [
+        "Sentinel-1C VV/VH backscatter for two consecutive passes",
+        "Field-boundary and crop-calendar layers",
+        "Irrigation advisory export with altered thresholds",
+        "Soil-moisture proxy and rainfall ancillary data"
+      ],
+      "drivers": [
+        {
+          "id": "driver-permanent-degradation",
+          "label": "Irreversible desertification",
+          "description": "Permanent land degradation removes vegetation and does not recover on the next pass."
+        },
+        {
+          "id": "driver-urban-encroachment",
+          "label": "Urban encroachment",
+          "description": "Construction replaces the field and creates a persistent built-up signature."
+        },
+        {
+          "id": "driver-flood-damage",
+          "label": "Flood damage to the crop",
+          "description": "Inundation destroys the crop and leaves a persistent low-backscatter water signature."
+        },
+        {
+          "id": "driver-rotation-moisture",
+          "label": "Normal crop rotation plus irrigation-driven soil moisture",
+          "description": "Canopy structure changes over weeks while wet soil alters the dielectric constant within days; the anomaly reverses after drainage."
+        }
+      ],
+      "recoveryActions": [
+        {
+          "id": "recovery-install-unsigned",
+          "label": "Install the update because the filename looks correct",
+          "description": "Trust the package name and deploy it to restore the advisory service."
+        },
+        {
+          "id": "recovery-disable-updates",
+          "label": "Disable all future updates",
+          "description": "Prevent recurrence by turning off the update channel permanently."
+        },
+        {
+          "id": "recovery-verify-signature-rollback",
+          "label": "Reject the update, verify the signature and SBOM, and roll back",
+          "description": "Remove the tampered build, validate the vendor signature and software bill of materials, and restore the last signed release."
+        },
+        {
+          "id": "recovery-trust-email-hash",
+          "label": "Trust the hash included in the vendor email",
+          "description": "Compare the package with the checksum supplied in the same message that delivered it."
+        }
+      ],
+      "hints": [
+        {
+          "id": 0,
+          "title": "Separate structure from moisture",
+          "text": "Crop rotation changes canopy structure over weeks; irrigation changes the soil dielectric constant within days. Compare the VV/VH ratio and the next-pass recovery.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 1,
+          "title": "Validate the alert against the calendar",
+          "text": "Check the field's planting calendar and local irrigation schedule. A normal rotation or a wet-soil pulse can mimic a crop-loss alert.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 2,
+          "title": "Look for the reversible block",
+          "text": "The target is a field block whose backscatter anomaly reverses after irrigation, not a permanently bare or urban surface.",
+          "penaltyPercent": 15
+        }
+      ],
+      "learningObjectives": [
+        "Separate crop-structure change from soil-moisture change in C-band SAR.",
+        "Use the next pass and the crop calendar to validate an agricultural alert.",
+        "Recognize a reversible field anomaly instead of overstating crop loss."
+      ]
+    },
+    {
+      "id": "level-5",
+      "levelNumber": 5,
+      "title": "The Ground Truth Ransom",
+      "unlockRequires": "level-4",
+      "category": "InSAR Coastal Subsidence",
+      "difficulty": "Advanced",
+      "basePoints": 300,
+      "securityWrapper": {
+        "type": "Ransomware",
+        "briefing": "Ransomware encrypted the ground-truth archive that supported a coastal subsidence assessment. The attackers demand payment for the key. The GUNW interferograms can be reprocessed, but only if the team restores from a trusted backup."
+      },
+      "targetLocation": "Jakarta Bay coastal plain, Indonesia",
+      "regionCenter": [-6.1, 106.78],
+      "defaultZoom": 11,
+      "boundingBox": {
+        "north": -6.02,
+        "south": -6.19,
+        "east": 106.89,
+        "west": 106.7
+      },
+      "satellite": {
+        "mission": "Sentinel-1 / ARIA",
+        "sensor": "C-SAR TOPS IW, geocoded unwrapped interferogram (GUNW)",
+        "frequencyGhz": 5.405,
+        "wavelengthCm": 5.55,
+        "polarization": "VV",
+        "passDirection": "Descending",
+        "lookAngleDeg": 39.0,
+        "acquisitionDate": "2025-09-12T10:48:00Z",
+        "repeatPassDays": 12,
+        "groundResolutionM": 90.0
+      },
+      "incidentBriefing": "Communities along Jakarta Bay are exposed to chronic coastal subsidence. A GUNW interferogram stack shows a persistent line-of-sight range-change bowl over the northern coastal plain. The team must distinguish real subsidence from atmospheric and tidal noise.",
+      "forensicMission": "Locate the persistent subsidence hotspot in the unwrapped GUNW phase, identify the physical driver, and choose the isolate-and-restore recovery. The final product must survive an independent interferometric pair.",
+      "sarPrimer": "InSAR measures phase, not brightness. One complete fringe cycle corresponds to half the radar wavelength of line-of-sight motion. A real subsidence signal persists across independent pairs and forms a spatially coherent deformation bowl; atmosphere and tides usually do not.",
+      "dataProducts": [
+        "Sentinel-1 GUNW unwrapped phase stack",
+        "Independent ascending and descending pairs",
+        "Coastal sediment-compaction map",
+        "Groundwater withdrawal and tide-gauge ancillary data"
+      ],
+      "drivers": [
+        {
+          "id": "driver-atmospheric-noise",
+          "label": "Transient atmospheric water-vapor delay",
+          "description": "Water vapor changes the propagation delay and can mimic a deformation ramp in a single interferogram."
+        },
+        {
+          "id": "driver-subsidence-compaction",
+          "label": "Sediment compaction and groundwater withdrawal",
+          "description": "A compacting coastal sediment package and aquifer drawdown produce persistent line-of-sight subsidence across independent pairs."
+        },
+        {
+          "id": "driver-tidal-flooding",
+          "label": "Tidal flooding of the coastal plain",
+          "description": "Tidal water changes the surface return but does not create a persistent phase ramp in the solid Earth."
+        },
+        {
+          "id": "driver-orbit-error",
+          "label": "An uncorrected satellite orbit error",
+          "description": "A baseline or orbit error creates a systematic phase ramp across the whole scene."
+        }
+      ],
+      "recoveryActions": [
+        {
+          "id": "recovery-pay-ransom",
+          "label": "Pay the ransom to recover the archive key",
+          "description": "Fund the attackers and trust them to return a working decryption key."
+        },
+        {
+          "id": "recovery-keep-running",
+          "label": "Keep the archive online and monitor the ransom note",
+          "description": "Leave the affected systems connected while the team watches for further instructions."
+        },
+        {
+          "id": "recovery-rebuild-no-backup",
+          "label": "Rebuild from the encrypted production data",
+          "description": "Attempt to reconstruct the archive using the encrypted files still on the production volume."
+        },
+        {
+          "id": "recovery-isolate-restore-backup",
+          "label": "Isolate the segment and restore from an immutable backup",
+          "description": "Contain the ransomware, preserve forensic evidence, and restore the GUNW archive from a tested, immutable backup."
+        }
+      ],
+      "hints": [
+        {
+          "id": 0,
+          "title": "Read the phase, not the brightness",
+          "text": "Subsidence is a phase measurement. Use the unwrapped GUNW interferogram and look for a persistent range-change ramp, not a single dark or bright pixel.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 1,
+          "title": "Remove the usual suspects",
+          "text": "Atmosphere and tides can contaminate one interferogram. A real subsidence hotspot persists across independent pairs and aligns with the coastal sediment package.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 2,
+          "title": "Follow the coast",
+          "text": "The anomaly sits over the subsiding coastal plain north of Jakarta Bay, where groundwater withdrawal and sediment compaction overlap.",
+          "penaltyPercent": 15
+        }
+      ],
+      "learningObjectives": [
+        "Read line-of-sight displacement from an unwrapped GUNW interferogram.",
+        "Separate persistent subsidence from atmospheric and tidal artifacts.",
+        "Correlate InSAR deformation with groundwater withdrawal and sediment compaction."
+      ]
+    },
+    {
+      "id": "level-6",
+      "levelNumber": 6,
+      "title": "The Glacier Signal Hijack",
+      "unlockRequires": "level-5",
+      "category": "Cryosphere Motion",
+      "difficulty": "Advanced",
+      "basePoints": 350,
+      "securityWrapper": {
+        "type": "Server Compromise",
+        "briefing": "A compromised processing node injected a fake slowdown into the glacier velocity product. Cloud cover prevented an optical cross-check. The velocity field must be rebuilt from SAR offset tracking."
+      },
+      "targetLocation": "Jakobshavn Isbrae, Greenland",
+      "regionCenter": [69.15, -49.8],
+      "defaultZoom": 10,
+      "boundingBox": {
+        "north": 69.3,
+        "south": 69.04,
+        "east": -49.63,
+        "west": -50.1
+      },
+      "satellite": {
+        "mission": "Sentinel-1C (ESA Copernicus)",
+        "sensor": "C-SAR TOPS IW SLC",
+        "frequencyGhz": 5.405,
+        "wavelengthCm": 5.55,
+        "polarization": "VV",
+        "passDirection": "Ascending",
+        "lookAngleDeg": 33.8,
+        "acquisitionDate": "2025-06-30T14:06:00Z",
+        "repeatPassDays": 12,
+        "groundResolutionM": 10.0
+      },
+      "incidentBriefing": "Jakobshavn Isbrae drains a large part of the Greenland ice sheet and flows toward the calving front. Persistent cloud cover hides the glacier from optical sensors, but SAR can track crevasses and supraglacial features between acquisitions.",
+      "forensicMission": "Locate the fast-flowing ice channel, confirm the displacement direction, identify the physical driver, and choose the contain-rotate-reprocess recovery. The corrected velocity product must be defensible against an independent pass.",
+      "sarPrimer": "Offset tracking measures the displacement of persistent surface features between two SAR images. Fast ice flow can alias short repeat intervals, so a longer baseline and a physically plausible flow direction toward the calving front are needed. Clouds do not block the radar.",
+      "dataProducts": [
+        "Sentinel-1C IW SLC pair for offset tracking",
+        "Independent longer-baseline velocity pair",
+        "Supraglacial feature and crevasse maps",
+        "Calving-front position from the SAR intensity image"
+      ],
+      "drivers": [
+        {
+          "id": "driver-cloud-shadow",
+          "label": "Cloud shadow changing optical brightness",
+          "description": "A cloud shadow darkens an optical image but does not move persistent radar features."
+        },
+        {
+          "id": "driver-tidal-flexure",
+          "label": "Tidal flexure of the ice shelf",
+          "description": "Ocean tides flex a floating ice shelf vertically and can add a small periodic displacement."
+        },
+        {
+          "id": "driver-ice-advection",
+          "label": "Advection of the glacier surface",
+          "description": "Ice flow carries crevasses and supraglacial features downstream between acquisitions, producing a coherent displacement field."
+        },
+        {
+          "id": "driver-vegetation-growth",
+          "label": "Vegetation growth on the glacier surface",
+          "description": "New vegetation changes the surface scattering between passes."
+        }
+      ],
+      "recoveryActions": [
+        {
+          "id": "recovery-contain-rotate-reprocess",
+          "label": "Contain the node, rotate keys, and reprocess from trusted raw data",
+          "description": "Isolate the compromised processor, remove persistence, rotate credentials, and rebuild the velocity product from authenticated SAR inputs."
+        },
+        {
+          "id": "recovery-publish-unverified",
+          "label": "Publish the suspect velocity product immediately",
+          "description": "Release the existing output before the independent pass is analyzed."
+        },
+        {
+          "id": "recovery-delete-logs",
+          "label": "Delete the processing logs to free storage",
+          "description": "Clear the node's logs so the reprocessing job has enough disk space."
+        },
+        {
+          "id": "recovery-restart-node",
+          "label": "Restart the node and assume the output is clean",
+          "description": "Reboot the processor and continue without revalidating the velocity field."
+        }
+      ],
+      "hints": [
+        {
+          "id": 0,
+          "title": "Track features, not brightness",
+          "text": "When clouds hide the ice, use offset tracking between SAR acquisitions. Match persistent crevasses and supraglacial features rather than comparing optical brightness.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 1,
+          "title": "Check the flow direction",
+          "text": "Glacier motion follows the ice channel toward the calving front. A displacement field that points uphill or changes randomly is probably noise.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 2,
+          "title": "Use a longer baseline",
+          "text": "Short repeat intervals can alias fast ice flow. Compare a longer pair and validate the velocity against the calving-front position.",
+          "penaltyPercent": 15
+        }
+      ],
+      "learningObjectives": [
+        "Measure glacier motion with SAR offset tracking through cloud cover.",
+        "Interpret a displacement field in the context of ice-channel flow.",
+        "Recognize aliasing and cloud-related artifacts in a velocity product."
+      ]
+    },
+    {
+      "id": "level-7",
+      "levelNumber": 7,
+      "title": "The Earth Response Center",
+      "unlockRequires": "level-6",
+      "category": "Multi-Hazard Triage",
+      "difficulty": "Expert",
+      "basePoints": 500,
+      "securityWrapper": {
+        "type": "Capstone",
+        "briefing": "The Earth Response Center dashboard is mixing authenticated alerts with fabricated ones. Multiple hazards are active in the Sundarbans. You must rebuild the final Earth Incident Report from independent SAR evidence and activate a coordinated response."
+      },
+      "targetLocation": "Sundarbans response sector, Khulna, Bangladesh",
+      "regionCenter": [21.93, 89.16],
+      "defaultZoom": 10,
+      "boundingBox": {
+        "north": 22.11,
+        "south": 21.74,
+        "east": 89.46,
+        "west": 88.94
+      },
+      "satellite": {
+        "mission": "NISAR + Sentinel-1 multi-mission",
+        "sensor": "L-band GCOV with C-band coherence and GUNW",
+        "frequencyGhz": 1.25,
+        "wavelengthCm": 24.0,
+        "polarization": "Multi-pol (HH + HV + VV)",
+        "passDirection": "Ascending",
+        "lookAngleDeg": 37.0,
+        "acquisitionDate": "2025-11-12T08:30:00Z",
+        "repeatPassDays": 12,
+        "groundResolutionM": 30.0
+      },
+      "incidentBriefing": "The Sundarbans is a subsiding, eroding delta exposed to cyclones and monsoonal flooding. A storm-surge flood layer, a mangrove-change layer, and a GUNW subsidence layer overlap in the same response sector. The capstone asks for triage, not a single-map answer.",
+      "forensicMission": "Locate the multi-hazard convergence cell, identify the compound coastal driver, select the coordinated recovery, and synthesize the final Earth Incident Report flag. Cross-validate independent sensors and state the uncertainty.",
+      "sarPrimer": "A multi-hazard report combines evidence with different physics: L-band flood extent, C-band coherence and change, and InSAR displacement. Agreement across independent measurements is stronger than any single dramatic pixel. Triage scores hazards by overlap and consequence.",
+      "dataProducts": [
+        "NISAR L-band flood and change layers",
+        "Sentinel-1 C-band coherence and GUNW displacement",
+        "Mangrove extent and erosion baselines",
+        "Storm-track, tide-gauge, and population exposure layers"
+      ],
+      "drivers": [
+        {
+          "id": "driver-compound-coastal",
+          "label": "Compound coastal hazard",
+          "description": "Storm surge and monsoonal flooding overlap with long-term subsidence and mangrove erosion in a subsiding delta."
+        },
+        {
+          "id": "driver-glacier-surge",
+          "label": "A glacier surge upstream of the delta",
+          "description": "A rapid glacier advance changes downstream hydrology and sediment supply."
+        },
+        {
+          "id": "driver-crop-rotation",
+          "label": "A normal crop-rotation cycle",
+          "description": "Seasonal planting and harvest change the agricultural backscatter signal."
+        },
+        {
+          "id": "driver-single-pixel-noise",
+          "label": "A single noisy pixel in one SAR scene",
+          "description": "One outlier in one acquisition creates a false anomaly with no spatial support."
+        }
+      ],
+      "recoveryActions": [
+        {
+          "id": "recovery-single-sensor-report",
+          "label": "Publish a single-sensor report without cross-validation",
+          "description": "Release the fastest available product and skip independent confirmation."
+        },
+        {
+          "id": "recovery-coordinated-response",
+          "label": "Activate a coordinated response and publish a validated report with uncertainty",
+          "description": "Contain the cyber incident, preserve evidence, validate the Earth observation across sensors, and brief responders with explicit confidence and uncertainty."
+        },
+        {
+          "id": "recovery-restore-portal-first",
+          "label": "Restore the public portal before validating the evidence",
+          "description": "Bring the dashboard back online first and reconcile the alerts afterward."
+        },
+        {
+          "id": "recovery-shutdown-all",
+          "label": "Shut down all Earth observation downlinks",
+          "description": "Stop every satellite data flow until the dashboard is trusted again."
+        }
+      ],
+      "hints": [
+        {
+          "id": 0,
+          "title": "Triage by convergence",
+          "text": "Score each hazard by spatial overlap and consequence. The capstone target is where flood extent, erosion, and subsidence coincide, not the largest single signal.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 1,
+          "title": "Use multiple sensors",
+          "text": "Cross-validate NISAR L-band flood and change information with Sentinel-1 C-band coherence and GUNW displacement. Agreement across independent measurements raises confidence.",
+          "penaltyPercent": 15
+        },
+        {
+          "id": 2,
+          "title": "Report uncertainty",
+          "text": "A defensible Earth Incident Report states what is observed, what is inferred, and what remains uncertain. Do not let one anomalous pixel drive the whole triage.",
+          "penaltyPercent": 15
+        }
+      ],
+      "learningObjectives": [
+        "Triage overlapping flood, erosion, and subsidence hazards by convergence.",
+        "Cross-validate L-band, C-band coherence, and InSAR displacement evidence.",
+        "Synthesize an Earth Incident Report that separates observations from uncertainty."
+      ]
+    }
+  ]
+}
