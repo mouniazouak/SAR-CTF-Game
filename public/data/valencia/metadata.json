@@ -1,0 +1,93 @@
+{
+  "zone": "valencia",
+  "name": "Valencia, Spain",
+  "label": "real NISAR data",
+  "bounds": [
+    [
+      39.372934,
+      -0.655672
+    ],
+    [
+      39.557102,
+      -0.313461
+    ]
+  ],
+  "crs": "EPSG:4326",
+  "scenes": [
+    {
+      "role": "before",
+      "granule": "NISAR_L2_PR_GCOV_033_167_D_069_2005_DHDH_A_20261023T190137_20261023T190212_P05036_N_F_J_001",
+      "datetime_utc": "2026-10-23T19:01:37Z",
+      "track": 167,
+      "frame": 69,
+      "direction": "Descending",
+      "polarization": "HH",
+      "product": "NISAR L2 GCOV, L-band, frequency A (20 m)"
+    },
+    {
+      "role": "after",
+      "granule": "NISAR_L2_PR_GCOV_034_058_A_022_2005_DHDH_A_20261028T050718_20261028T050753_P05036_N_F_J_001",
+      "datetime_utc": "2026-10-28T05:07:18Z",
+      "track": 58,
+      "frame": 22,
+      "direction": "Ascending",
+      "polarization": "HH",
+      "product": "NISAR L2 GCOV, L-band, frequency A (20 m)"
+    }
+  ],
+  "layers": {
+    "before": {
+      "file": "before.png",
+      "description": "HH backscatter, BEFORE",
+      "range_db": [
+        -25,
+        0
+      ]
+    },
+    "after": {
+      "file": "after.png",
+      "description": "HH backscatter, AFTER",
+      "range_db": [
+        -25,
+        0
+      ]
+    },
+    "change": {
+      "file": "change.png",
+      "description": "AFTER - BEFORE (blue = darker, red = brighter)",
+      "range_db": [
+        -10,
+        10
+      ]
+    },
+    "water": {
+      "file": "water.png",
+      "description": "Water detected by Otsu + physics rule",
+      "legend": {
+        "permanent_water": "#1e78ff",
+        "new_water": "#e61e1e",
+        "water_gone": "#ffa500"
+      }
+    }
+  },
+  "processing": {
+    "speckle_filter": "median 5x5",
+    "otsu_threshold_db": -12.19,
+    "water_threshold_db": -15.0,
+    "threshold_rule": "min(Otsu on a wide area including the sea, -15 dB)"
+  },
+  "results": {
+    "water_before_pct": 0.55,
+    "water_after_pct": 0.54,
+    "new_water_pct": 0.42,
+    "water_gone_pct": 0.44,
+    "rain_between_scenes_mm": 0.1,
+    "conclusion": "No flood: no large new water area, and almost no rain between the two dates."
+  },
+  "notes": [
+    "The two scenes have different viewing geometry (Descending vs Ascending): buildings and smooth surfaces (airport) can change brightness without any real surface change.",
+    "Dark does not always mean water: smooth surfaces like runways also look dark."
+  ],
+  "source": "NISAR data courtesy of NASA/JPL-Caltech and ISRO, distributed by ASF DAAC.",
+  "weather_source": "Open-Meteo Historical Weather API"
+}
