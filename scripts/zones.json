@@ -1,0 +1,41 @@
+{
+  "valencia": {
+    "name": "Valencia, Spain",
+    "bbox": [
+      -0.65,
+      39.38,
+      -0.32,
+      39.55
+    ],
+    "wide_bbox": [
+      -0.7,
+      39.25,
+      -0.15,
+      39.6
+    ],
+    "city_center": [
+      39.4699,
+      -0.3763
+    ],
+    "before": {
+      "datetime_utc": "2026-10-23T19:01:37Z",
+      "track": 167,
+      "frame": 69,
+      "direction": "Descending",
+      "granule": "NISAR_L2_PR_GCOV_033_167_D_069_2005_DHDH_A_20261023T190137_20261023T190212_P05036_N_F_J_001"
+    },
+    "after": {
+      "datetime_utc": "2026-10-28T05:07:18Z",
+      "track": 58,
+      "frame": 22,
+      "direction": "Ascending",
+      "granule": "NISAR_L2_PR_GCOV_034_058_A_022_2005_DHDH_A_20261028T050718_20261028T050753_P05036_N_F_J_001"
+    },
+    "weather_point": [
+      39.46,
+      -0.4275
+    ],
+    "event": "none (no flood between the two dates)",
+    "output_dir": "public/data/valencia"
+  }
+}
