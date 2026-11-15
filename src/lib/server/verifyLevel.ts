@@ -1,7 +1,6 @@
 import { LEVEL_ANSWER_KEYS } from './levelAnswerKey';
 import { getLevelDefinition } from './levelCatalog';
 import type {
-  IncidentLevelId,
   ScoreBreakdown,
   VerifyLevelFailure,
   VerifyLevelPayload,
