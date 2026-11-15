@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     });
 
     return res;
-  } catch (error) {
+  } catch {
     return NextResponse.json({ success: false, message: 'Session initialization failed' }, { status: 500 });
   }
 }

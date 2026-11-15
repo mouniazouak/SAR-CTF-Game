@@ -43,6 +43,12 @@ export function IncidentBriefingPanel({
   const [revealingHintId, setRevealingHintId] = useState<number | null>(null);
   const [showLogs, setShowLogs] = useState<boolean>(true);
   const [copiedCoords, setCopiedCoords] = useState<boolean>(false);
+  const [weatherSummary, setWeatherSummary] = useState<{
+    precipitation: number;
+    temperature: number | null;
+    wind: number | null;
+  } | null>(null);
+  const [weatherStatus, setWeatherStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
 
   // Streaming synthetic logs
   const [sensorLogs, setSensorLogs] = useState<string[]>([
@@ -68,6 +74,38 @@ export function IncidentBriefingPanel({
     }, 12000);
 
     return () => clearInterval(timer);
+  }, [challenge]);
+
+  // Weather is contextual evidence, not the scientific answer by itself.
+  useEffect(() => {
+    const date = challenge.satellite.acquisitionDate.slice(0, 10);
+    const query = new URLSearchParams({
+      latitude: String(challenge.centerCoordinates[0]),
+      longitude: String(challenge.centerCoordinates[1]),
+      start_date: date,
+      end_date: date,
+      timezone: 'UTC',
+    });
+    setWeatherStatus('loading');
+    fetch(`/api/weather?${query.toString()}`)
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error('weather'))))
+      .then((payload) => {
+        const hourly = payload.weather?.hourly;
+        if (!payload.success || !hourly) throw new Error('weather');
+        const totalRain = (hourly.precipitation || []).reduce((sum: number, value: number) => sum + (value || 0), 0);
+        const temperatures = (hourly.temperature_2m || []).filter((value: number | null) => value !== null);
+        const winds = (hourly.wind_speed_10m || []).filter((value: number | null) => value !== null);
+        setWeatherSummary({
+          precipitation: Number(totalRain.toFixed(1)),
+          temperature: temperatures.length ? Number((temperatures.reduce((a: number, b: number) => a + b, 0) / temperatures.length).toFixed(1)) : null,
+          wind: winds.length ? Number(Math.max(...winds).toFixed(1)) : null,
+        });
+        setWeatherStatus('ready');
+      })
+      .catch(() => {
+        setWeatherSummary(null);
+        setWeatherStatus('unavailable');
+      });
   }, [challenge]);
 
   const handleCopyCoords = () => {
@@ -121,7 +159,7 @@ export function IncidentBriefingPanel({
           message: data.message || 'Verification rejected: Phase decorrelation detected.',
         });
       }
-    } catch (err) {
+    } catch {
       soundFX.playErrorBuzzer();
       setSubmitFeedback({
         success: false,
@@ -154,7 +192,7 @@ export function IncidentBriefingPanel({
         soundFX.playHintChime();
         onHintRevealed(data);
       }
-    } catch (e) {
+    } catch {
       // Failed to reveal hint
     } finally {
       setRevealingHintId(null);
@@ -244,6 +282,23 @@ export function IncidentBriefingPanel({
               <div className="dark:text-slate-200 text-slate-800">{challenge.satellite.groundResolutionM}m spatial resolution</div>
             </div>
           </div>
+        </div>
+
+        {/* Historical weather context */}
+        <div className="rounded-lg border p-3 text-xs font-mono transition-colors shadow-sm dark:bg-[#0b1626] dark:border-cyan-900/50 bg-white border-slate-200">
+          <div className="flex items-center justify-between pb-2 mb-2 border-b dark:border-cyan-950/80 border-slate-200">
+            <span className="font-bold tracking-wider uppercase dark:text-cyan-400 text-sky-700">WEATHER CONTEXT</span>
+            <span className="text-[10px] dark:text-slate-500 text-slate-400">Open-Meteo archive</span>
+          </div>
+          {weatherStatus === 'loading' && <p className="text-[11px] dark:text-slate-400 text-slate-500">Loading historical conditions...</p>}
+          {weatherStatus === 'unavailable' && <p className="text-[11px] dark:text-amber-300 text-amber-700">Weather data unavailable for this mission.</p>}
+          {weatherStatus === 'ready' && weatherSummary && (
+            <div className="grid grid-cols-3 gap-2 text-[11px]">
+              <div><span className="block dark:text-slate-500 text-slate-400">RAIN</span><strong>{weatherSummary.precipitation} mm</strong></div>
+              <div><span className="block dark:text-slate-500 text-slate-400">TEMP AVG</span><strong>{weatherSummary.temperature ?? '—'} °C</strong></div>
+              <div><span className="block dark:text-slate-500 text-slate-400">WIND MAX</span><strong>{weatherSummary.wind ?? '—'} km/h</strong></div>
+            </div>
+          )}
         </div>
 
         {/* Tactical Scenario Briefing */}

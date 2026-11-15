@@ -1,0 +1,37 @@
+{
+  "mission": "Valencia SAR false-alarm investigation",
+  "mode": "prototype-real-nisar-previews",
+  "scientificNote": "The two available Valencia scenes are real NISAR HHHH data, but they differ in track/frame/pass geometry. They are used for visual interpretation and false-alarm training, not as a validated quantitative before/after pair.",
+  "collection": "NISAR_L2_GCOV_V1",
+  "collectionId": "C3622241360-ASF",
+  "area": {
+    "name": "Turia / Valencia",
+    "south": 39.41,
+    "west": -0.49,
+    "north": 39.51,
+    "east": -0.37
+  },
+  "scenes": [
+    {
+      "id": "scene-2026-10-28",
+      "acquisitionStart": "2026-10-28T05:07:18",
+      "acquisitionEnd": "2026-10-28T05:07:53",
+      "product": "NISAR_L2_PR_GCOV_034_058_A_022_2005_DHDH_A_20261028T050718_20261028T050753_P05036_N_F_J_001",
+      "localFile": "data/raw/nisar/turia/scene_2026-10-28/NISAR_L2_PR_GCOV_034_058_A_022_2005_DHDH_A_20261028T050718_20261028T050753_P05036_N_F_J_001.h5",
+      "geotiff": "data/processed/nisar/turia/scene_2026-10-28_HHHH_full.tif",
+      "previewPng": "/data/nisar/scene_2026-10-28_HHHH.png",
+      "role": "after"
+    },
+    {
+      "id": "scene-2026-10-23",
+      "acquisitionStart": "2026-10-23T19:01:37",
+      "acquisitionEnd": "2026-10-23T19:02:12",
+      "product": "NISAR_L2_PR_GCOV_033_167_D_069_2005_DHDH_A_20261023T190137_20261023T190212_P05036_N_F_J_001",
+      "localFile": "data/raw/nisar/turia/scene_2026-10-23/NISAR_L2_PR_GCOV_033_167_D_069_2005_DHDH_A_20261023T190137_20261023T190212_P05036_N_F_J_001.h5",
+      "geotiff": "data/processed/nisar/turia/scene_2026-10-23_HHHH_full.tif",
+      "previewPng": "/data/nisar/scene_2026-10-23_HHHH.png",
+      "role": "before",
+      "status": "downloaded"
+    }
+  ]
+}

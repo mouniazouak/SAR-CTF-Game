@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Challenge, ForensicSample } from '@/types/ctf';
 import { sampleForensics, generateProceduralSarOverlay } from '@/lib/sar-forensics';
 import {
@@ -13,6 +14,7 @@ import {
   ZoomOut,
 } from 'lucide-react';
 import { soundFX } from '@/lib/audio';
+import { MISSION_ASSETS } from '@/lib/mission-assets';
 
 interface GeospatialForensicsMapProps {
   challenge: Challenge;
@@ -112,7 +114,16 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
     setTimeout(() => setCopiedText(null), 2000);
   };
 
-  const sarOverlayUrl = generateProceduralSarOverlay(challenge.id);
+  // Valencia is the first mission backed by the Data/AI evidence package.
+  // Other CTF levels keep their own procedural teaching layer until a
+  // mission-specific evidence package is added.
+  const missionAssets = MISSION_ASSETS[challenge.id];
+  const isRealMission = missionAssets?.mode === 'real-nisar-visual';
+  const realBeforeUrl = missionAssets?.before ?? '';
+  const realAfterUrl = missionAssets?.after ?? '';
+  const sarOverlayUrl = isRealMission
+    ? realAfterUrl
+    : generateProceduralSarOverlay(challenge.id);
   const activeSample = pinnedSample || hoverSample;
 
   return (
@@ -123,12 +134,14 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-2 py-1 rounded border text-xs font-mono transition-colors dark:bg-cyan-950/80 dark:border-cyan-800 dark:text-cyan-300 bg-sky-50 border-sky-300 text-sky-800">
             <Radar className="w-3.5 h-3.5 dark:text-cyan-400 text-sky-600 animate-spin" style={{ animationDuration: '8s' }} />
-            <span className="font-bold">X-RAY SAR INSPECTOR</span>
+            <span className="font-bold">NISAR GCOV INSPECTOR</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-1 text-[11px] font-mono dark:text-slate-400 text-slate-500">
             <span>FRAME:</span>
-            <span className="dark:text-slate-200 text-slate-700 font-medium">NISAR-L1-SLC</span>
+            <span className="dark:text-slate-200 text-slate-700 font-medium">
+              {isRealMission ? 'NISAR-L2-GCOV / HH / VISUAL PAIR' : 'NISAR-L2-GCOV / HHHH'}
+            </span>
           </div>
         </div>
 
@@ -244,7 +257,10 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
           <div
             className="w-full h-full bg-cover bg-center transition-all duration-300"
             style={{
-              backgroundImage: `radial-gradient(circle at 50% 50%, #1a2f42 0%, #0d1b28 60%, #060e17 100%)`,
+              backgroundImage: realBeforeUrl
+                ? `linear-gradient(rgba(6, 14, 23, 0.15), rgba(6, 14, 23, 0.15)), url(${realBeforeUrl})`
+                : 'radial-gradient(circle at 50% 50%, #1a2f42 0%, #0d1b28 60%, #060e17 100%)',
+              ...(realBeforeUrl ? { backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
               filter: 'contrast(1.15) brightness(0.95)',
             }}
           >
@@ -282,9 +298,11 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
           }}
         >
           {/* Procedural SAR Radar Visualization */}
-          <img
+          <Image
             src={sarOverlayUrl}
             alt="SAR Overlay"
+            fill
+            unoptimized
             className="w-full h-full object-cover select-none"
             style={{
               transform: `scale(${Math.pow(1.05, zoom - challenge.defaultZoom)})`,
@@ -309,10 +327,10 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
 
             {/* Labels */}
             <div className="absolute top-4 -left-20 px-2 py-0.5 rounded text-[10px] font-mono shadow-sm dark:bg-black/80 dark:border-slate-700 dark:text-slate-300 bg-white/95 border border-slate-300 text-slate-800 font-bold">
-              OPTICAL
+              {isRealMission ? 'BEFORE — REAL NISAR HHHH' : 'OPTICAL BASELINE'}
             </div>
             <div className="absolute top-4 left-3 px-2 py-0.5 rounded text-[10px] font-mono shadow-sm dark:bg-cyan-950/90 dark:border-cyan-600 dark:text-cyan-300 bg-sky-600 text-white font-bold">
-              SAR RADAR
+              {isRealMission ? 'AFTER — REAL NISAR HHHH' : 'SAR RADAR'}
             </div>
           </div>
         )}

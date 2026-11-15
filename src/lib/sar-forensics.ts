@@ -1,4 +1,4 @@
-import { LevelId, ForensicSample } from '@/types/ctf';
+import type { LevelId, ForensicSample } from '@/types/ctf';
 
 export interface AnomalyProfile {
   centerLat: number;
@@ -15,10 +15,10 @@ export const ANOMALY_PROFILES: Record<LevelId, AnomalyProfile> = {
     targetName: 'Trihedral Cal-Reflector TR-04',
   },
   'level-1': {
-    centerLat: 39.4628,
-    centerLng: -0.4285,
-    radiusDeg: 0.025,
-    targetName: 'Submerged Multi-Modal Terminal C (Turia)',
+    centerLat: 39.48821,
+    centerLng: -0.48278,
+    radiusDeg: 0.012,
+    targetName: 'Manises Airport Runway False Alarm',
   },
   'level-2': {
     centerLat: 52.8732,
@@ -89,11 +89,11 @@ export function sampleForensics(levelId: LevelId, lat: number, lng: number): For
     }
 
     case 'level-1': {
-      // Inundated flood zone
-      // Background: -9.5 dB (urban/soil). Water: -23.4 dB (specular loss)
-      const sigma0 = -9.5 - proximityFactor * 13.9 + Math.cos(lng * 500) * 0.5;
-      const coherence = Math.max(0.08, 0.68 - proximityFactor * 0.56);
-      const isFlooded = proximityFactor > 0.45;
+      // Valencia false positive: a smooth runway can be radar-dark without
+      // being new water. The CTF tests interpretation, not threshold chasing.
+      const sigma0 = -11.0 - proximityFactor * 4.0 + Math.cos(lng * 500) * 0.35;
+      const coherence = Math.max(0.42, 0.72 - proximityFactor * 0.18);
+      const isRunway = proximityFactor > 0.45;
 
       return {
         lat: Number(lat.toFixed(5)),
@@ -102,10 +102,10 @@ export function sampleForensics(levelId: LevelId, lat: number, lng: number): For
         coherence: Number(coherence.toFixed(2)),
         displacementCm: 0.0,
         fringeCount: 0,
-        surfaceClass: isFlooded
-          ? 'Specular Water Surface (Flooded Logistics Corridor)'
-          : 'Non-Inundated Urban/Alluvial Soil',
-        confidence: isFlooded ? 96 : 82,
+        surfaceClass: isRunway
+          ? 'Smooth Artificial Surface (Airport Runway False Alarm)'
+          : 'Urban / Alluvial Surface',
+        confidence: isRunway ? 94 : 82,
       };
     }
 

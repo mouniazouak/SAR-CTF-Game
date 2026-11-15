@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       currentChallengePoints: activeChallenge?.currentPoints,
       totalScore: session.totalScore,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         success: false,

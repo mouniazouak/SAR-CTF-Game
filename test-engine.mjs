@@ -45,7 +45,7 @@ assert(challengesInitial[4].unlocked === false, 'Level 4 is locked');
 assert(challengesInitial[8].unlocked === false, 'Level 8 is locked');
 
 // Attempt to submit Level 1 before Level 0
-const prematureSubmit = submitFlag(session, 'level-1', 'flag{nisar_flood_specular_turia}');
+const prematureSubmit = submitFlag(session, 'level-1', 'flag{nisar_false_alarm_valencia_airport}');
 assert(!prematureSubmit.success, 'Premature submission for locked Level 1 is blocked');
 
 // Reveal Hint #1 on Level 0 (-25% penalty)
@@ -65,7 +65,7 @@ const challengesAfterL0 = getPlayerChallenges(session);
 assert(challengesAfterL0[1].unlocked === true, 'Level 1 is now unlocked in challenge list');
 
 // Solve Level 1 (Base 100 pts, no hints = 100 pts)
-const solveLevel1 = submitFlag(session, 'level-1', 'flag{nisar_flood_specular_turia}');
+const solveLevel1 = submitFlag(session, 'level-1', 'flag{nisar_false_alarm_valencia_airport}');
 assert(solveLevel1.success, 'Level 1 solved successfully');
 assert(solveLevel1.pointsAwarded === 100, 'Level 1 awards full 100 points without hints');
 assert(session.totalScore === 138, 'Session score updated to 138 pts');
@@ -97,8 +97,11 @@ assert(playerEntry.isCurrentPlayer === true, 'Current player flagged in leaderbo
 const calSample = sampleForensics('level-0', 34.8722, -118.1564);
 assert(calSample.sigma0Db > 20, `Calibration point returns hyper-bright backscatter: ${calSample.sigma0Db} dB`);
 
-const floodSample = sampleForensics('level-1', 39.4628, -0.4285);
-assert(floodSample.sigma0Db < -20, `Specular flood surface returns low backscatter void: ${floodSample.sigma0Db} dB`);
+const runwaySample = sampleForensics('level-1', 39.48821, -0.48278);
+assert(
+  runwaySample.sigma0Db < -13 && runwaySample.sigma0Db > -20,
+  `Airport runway false alarm returns a dark but non-water signature: ${runwaySample.sigma0Db} dB`
+);
 
 const burnSample = sampleForensics('level-2', 52.8732, -118.0821);
 assert(burnSample.coherence < 0.25, `Wildfire burn scar returns severe coherence decorrelation: γ = ${burnSample.coherence}`);

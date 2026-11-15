@@ -13,7 +13,6 @@ import {
   Radio,
   Sun,
   Moon,
-  Sparkles,
 } from 'lucide-react';
 import { soundFX } from '@/lib/audio';
 

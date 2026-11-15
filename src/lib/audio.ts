@@ -50,7 +50,7 @@ class SoundFXController {
 
       osc.start();
       osc.stop(ctx.currentTime + 0.14);
-    } catch (e) {
+    } catch {
       // AudioContext policy suppression fallback
     }
   }
@@ -81,7 +81,7 @@ class SoundFXController {
         osc.start(ctx.currentTime + idx * 0.08);
         osc.stop(ctx.currentTime + idx * 0.08 + 0.45);
       });
-    } catch (e) {
+    } catch {
       // AudioContext policy suppression fallback
     }
   }
@@ -110,7 +110,7 @@ class SoundFXController {
 
       osc.start();
       osc.stop(ctx.currentTime + 0.28);
-    } catch (e) {
+    } catch {
       // AudioContext policy suppression fallback
     }
   }
@@ -140,7 +140,7 @@ class SoundFXController {
 
       osc.start();
       osc.stop(ctx.currentTime + 0.25);
-    } catch (e) {
+    } catch {
       // AudioContext policy suppression fallback
     }
   }

@@ -1,0 +1,63 @@
+{
+  "createdAt": "2026-11-14T22:21:42.4368989Z",
+  "before": [
+    "Input file size is 17604, 17352",
+    "0...10...20...30...40...50...60...70...80...90...100 - done in 00:00:06.",
+    "Creating output file that is 1600P x 761L.",
+    "Processing before-raw.tif [1/1] : 0...10...20...30...40...50...60...70...80...90...100 - done.",
+    "0...10...20...30...40...50...60...70...80...90...100 - done.",
+    "Input file size is 1600, 761",
+    "0...10...20...30...40...50...60...70...80...90...100 - done.",
+    {
+      "role": "before",
+      "source": "data\\processed\\nisar\\turia\\scene_2026-10-23_HHHH_full.tif",
+      "subdataset": "data\\processed\\nisar\\turia\\scene_2026-10-23_HHHH_full.tif",
+      "aligned": "data\\processed\\nisar\\turia\\aligned-visual\\before-aligned.tif",
+      "cleaned": "data\\processed\\nisar\\turia\\aligned-visual\\before-clean.tif",
+      "preview": "data\\processed\\nisar\\turia\\aligned-visual\\before.png"
+    }
+  ],
+  "after": [
+    "Input file size is 18000, 17748",
+    "0...10...20...30...40...50...60...70...80...90...100 - done.",
+    "Creating output file that is 1600P x 761L.",
+    "Processing after-raw.tif [1/1] : 0...10...20...30...40...50...60...70...80...90...100 - done.",
+    "0...10...20...30...40...50...60...70...80...90...100 - done.",
+    "Input file size is 1600, 761",
+    "0...10...20...30...40...50...60...70...80...90...100 - done.",
+    {
+      "role": "after",
+      "source": "data\\processed\\nisar\\turia\\scene_2026-10-28_HHHH_full.tif",
+      "subdataset": "data\\processed\\nisar\\turia\\scene_2026-10-28_HHHH_full.tif",
+      "aligned": "data\\processed\\nisar\\turia\\aligned-visual\\after-aligned.tif",
+      "cleaned": "data\\processed\\nisar\\turia\\aligned-visual\\after-clean.tif",
+      "preview": "data\\processed\\nisar\\turia\\aligned-visual\\after.png"
+    }
+  ],
+  "geometry": {
+    "Track": null,
+    "Frame": null,
+    "Direction": null,
+    "Known": false
+  },
+  "geometryCompatible": false,
+  "comparisonMode": "visual-only-aligned",
+  "intersection": {
+    "West": 518400.0,
+    "South": 4314200.0,
+    "East": 794160.0,
+    "North": 4445280.0
+  },
+  "processing": {
+    "layer": "HHHH",
+    "removeNoData": true,
+    "convertLinearToDb": true,
+    "commonIntersection": true,
+    "commonPixelGrid": true,
+    "robustPercentiles": [
+      2,
+      98
+    ],
+    "warning": "Different track/frame/pass direction: change.png is for visual inspection only."
+  }
+}

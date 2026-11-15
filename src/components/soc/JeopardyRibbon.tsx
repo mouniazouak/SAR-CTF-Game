@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Crosshair,
   Flame,
-  Droplets,
   Activity,
   Sliders,
   Sparkles,
@@ -30,7 +29,7 @@ export function JeopardyRibbon({
       case 'level-0':
         return <Sliders className="w-4 h-4" />;
       case 'level-1':
-        return <Droplets className="w-4 h-4" />;
+        return <Crosshair className="w-4 h-4" />;
       case 'level-2':
         return <Flame className="w-4 h-4" />;
       case 'level-3':

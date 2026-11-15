@@ -1,0 +1,32 @@
+{
+  "id": "jasper-fire-scar",
+  "title": "Jasper Fire Scar — NISAR before/after pair",
+  "phenomenon": "burn scar / vegetation loss",
+  "collection": "NISAR_L2_GCOV_V1",
+  "area": {
+    "name": "Jasper National Park, Alberta, Canada",
+    "south": 52.70,
+    "west": -118.35,
+    "north": 53.10,
+    "east": -117.80
+  },
+  "pairRule": "same track, frame, pass direction and polarization; different acquisition dates",
+  "before": {
+    "date": "2026-10-27",
+    "product": "NISAR_L2_PR_GCOV_034_048_A_029_4005_DHDH_A_20261027T123226_20261027T123301_P05036_N_F_J_001",
+    "downloadStatus": "pending"
+  },
+  "after": {
+    "date": "2026-11-08",
+    "product": "NISAR_L2_PR_GCOV_035_048_A_029_4005_DHDH_A_20261108T123226_20261108T123302_P05036_N_F_J_001",
+    "downloadStatus": "pending"
+  },
+  "weather": {
+    "latitude": 52.90,
+    "longitude": -118.05,
+    "timezone": "America/Edmonton",
+    "source": "Open-Meteo historical archive",
+    "endpoint": "/api/weather?latitude=52.9&longitude=-118.05&start_date=2026-10-27&end_date=2026-11-08&timezone=America/Edmonton"
+  },
+  "pipelineOutputs": ["before.png", "after.png", "change.png", "metadata.json", "grid.json", "weather.json", "truth.geojson"]
+}

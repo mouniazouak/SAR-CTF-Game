@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Challenge, LevelId, FlagSubmissionResult, HintRevealResult } from '@/types/ctf';
+import { Challenge, LevelId, FlagSubmissionResult } from '@/types/ctf';
 import { Navbar } from '@/components/soc/Navbar';
 import { JeopardyRibbon } from '@/components/soc/JeopardyRibbon';
 import { IncidentBriefingPanel } from '@/components/soc/IncidentBriefingPanel';
@@ -29,7 +29,7 @@ export default function ForensicWorkbenchPage() {
         setTheme('dark');
         document.documentElement.classList.add('dark');
       }
-    } catch (e) {
+    } catch {
       // localStorage policy suppression fallback
     }
   }, []);
@@ -44,8 +44,26 @@ export default function ForensicWorkbenchPage() {
       } else {
         document.documentElement.classList.remove('dark');
       }
-    } catch (e) {}
+    } catch {}
   };
+
+  // Fetch challenge status
+  const fetchChallenges = useCallback(async (sessionToken: string) => {
+    try {
+      const res = await fetch('/api/challenges', {
+        headers: { 'x-session-token': sessionToken },
+      });
+      const data = await res.json();
+      if (data.success && Array.isArray(data.challenges)) {
+        setChallenges(data.challenges);
+        if (data.player) {
+          setTotalScore(data.player.totalScore);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load orbital challenges:', err);
+    }
+  }, []);
 
   // Initialize or restore session
   const initSession = useCallback(async () => {
@@ -84,25 +102,7 @@ export default function ForensicWorkbenchPage() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
-
-  // Fetch challenge status
-  const fetchChallenges = async (sessionToken: string) => {
-    try {
-      const res = await fetch('/api/challenges', {
-        headers: { 'x-session-token': sessionToken },
-      });
-      const data = await res.json();
-      if (data.success && Array.isArray(data.challenges)) {
-        setChallenges(data.challenges);
-        if (data.player) {
-          setTotalScore(data.player.totalScore);
-        }
-      }
-    } catch (err) {
-      console.error('Failed to load orbital challenges:', err);
-    }
-  };
+  }, [fetchChallenges]);
 
   useEffect(() => {
     initSession();
@@ -124,7 +124,7 @@ export default function ForensicWorkbenchPage() {
   };
 
   // Handle hint revealed
-  const handleHintRevealed = (result: HintRevealResult) => {
+  const handleHintRevealed = () => {
     if (token) {
       fetchChallenges(token);
     }
@@ -146,8 +146,8 @@ export default function ForensicWorkbenchPage() {
           setChallenges(data.challenges);
         }
       }
-    } catch (e) {
-      console.error('Failed to reset session:', e);
+    } catch (error) {
+      console.error('Failed to reset session:', error);
     }
   };
 

@@ -1,0 +1,32 @@
+{
+  "targetLocation": "Valencia, Spain (city and Manises airport)",
+  "regionCenter": [
+    39.465,
+    -0.4846
+  ],
+  "defaultZoom": 12,
+  "boundingBox": {
+    "north": 39.5571,
+    "south": 39.3729,
+    "east": -0.3135,
+    "west": -0.6557
+  },
+  "satellite": {
+    "mission": "NISAR (NASA-ISRO SAR)",
+    "sensor": "L-SAR, GCOV frequency A (20 MHz)",
+    "frequencyGhz": 1.25,
+    "wavelengthCm": 24.0,
+    "polarization": "Dual-Pol (HH + HV)",
+    "passDirection": "Descending",
+    "lookAngleDeg": 44.5,
+    "acquisitionDate": "2026-10-23T19:01:37Z",
+    "repeatPassDays": 12,
+    "groundResolutionM": 20.0
+  },
+  "dataProducts": [
+    "NISAR L2 GCOV HH, 2026-10-23 (track 167, Descending)",
+    "NISAR L2 GCOV HH, 2026-10-28 (track 58, Ascending)",
+    "Change map (after - before, dB) and Otsu water mask (threshold -15 dB)",
+    "Open-Meteo hourly precipitation, 23-28 Oct 2026 (total 0.1 mm)"
+  ]
+}

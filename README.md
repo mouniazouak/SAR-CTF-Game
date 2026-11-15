@@ -24,7 +24,7 @@ The game implements strict progressive level unlocking: Level 0 is available imm
 | Level | Codename | Category | Mission Target | Physical Phenomenon & Metric | Base Pts |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Level 0** | `PROJECT ROSAMOND` | Radiometric Calibration | Rosamond Dry Lake, CA | Trihedral point corner reflector retroreflection ($\sigma^0 > +20\text{ dB}$) | **50 PTS** |
-| **Level 1** | `OPERATION TURIA SURGE` | Disaster Rapid Response | Turia River Basin, Valencia | Specular reflection water void ($\sigma^0 \le -22\text{ dB}$) | **100 PTS** |
+| **Level 1** | `OPERATION TURIA FALSE POSITIVE` | SAR Interpretation | Manises Airport, Valencia | Distinguish a radar-dark runway from new floodwater | **100 PTS** |
 | **Level 2** | `JASPER PYRO-RADAR` | Biomass & Coherence Loss | Athabasca Valley, Jasper | Destructive canopy decorrelation ($\gamma < 0.20$) | **250 PTS** |
 | **Level 3** | `SEISMIC RIDGE INTERFEROGRAM` | InSAR Crustal Deformation | Ridgecrest Fault Zone, CA | Differential phase fringes ($\Delta r = \frac{\lambda}{2} = 12\text{ cm}$/fringe) | **500 PTS** |
 | **Level 4** | `GHOST ORBIT` | Mission Data Forensics | NISAR Ground Data Relay | Timeline, checksum, metadata, and visual evidence correlation | **1000 PTS** |
@@ -133,7 +133,7 @@ jobs:
 | Level | Physical Anomaly | Verification Flag |
 | :--- | :--- | :--- |
 | **Level 0** | Trihedral Corner Reflector (+24.8 dB spike at 34.8722°N) | `flag{nisar_cal_point_target_3487}` |
-| **Level 1** | Turia River Specular Flood Depression (-23.4 dB void) | `flag{nisar_flood_specular_turia}` |
+| **Level 1** | Valencia airport runway false alarm (dark smooth surface, not floodwater) | `flag{nisar_false_alarm_valencia_airport}` |
 | **Level 2** | Jasper Wildfire Canopy Decorrelation ($\gamma = 0.14$) | `flag{nisar_coherence_burn_jasper}` |
 | **Level 3** | InSAR 12cm Fringe Displacement ($\lambda/2 = 12\text{ cm}$) | `flag{nisar_fault_slip_12cm_fringe}` |
 | **Level 4** | Ghost Orbit evidence correlation | `flag{nisar_sar_integrity_breach}` |

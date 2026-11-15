@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "appliesTo": "all NISAR GCOV scenes",
+  "pairValidation": [
+    "same track",
+    "same frame",
+    "same pass direction",
+    "same frequency",
+    "same polarization",
+    "same measurement layer"
+  ],
+  "preprocessing": {
+    "removeNoData": true,
+    "convertLinearSigma0ToDb": true,
+    "cropToCommonIntersection": true,
+    "resampleToCommonPixelGrid": true,
+    "normalizationPercentiles": [2, 98],
+    "clipOutliers": true
+  },
+  "comparison": {
+    "computeOnlyAfterAlignment": true,
+    "keepRawHdf5AsSource": true,
+    "export": ["before.png", "after.png", "change.png", "metadata.json", "grid.json", "truth.geojson"]
+  }
+}

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { LeaderboardEntry } from '@/types/ctf';
+import React, { useState, useEffect, useCallback } from 'react';
+import { LeaderboardEntry, LevelId } from '@/types/ctf';
 import {
   Trophy,
   X,
@@ -20,7 +20,7 @@ export function LeaderboardModal({ isOpen, onClose, token }: LeaderboardModalPro
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     setIsLoading(true);
     try {
       const res = await fetch('/api/leaderboard', {
@@ -30,18 +30,18 @@ export function LeaderboardModal({ isOpen, onClose, token }: LeaderboardModalPro
       if (data.success && Array.isArray(data.leaderboard)) {
         setEntries(data.leaderboard);
       }
-    } catch (e) {
+    } catch {
       // Fetch error fallback
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (isOpen) {
       fetchLeaderboard();
     }
-  }, [isOpen, token]);
+  }, [isOpen, fetchLeaderboard]);
 
   if (!isOpen) return null;
 
@@ -153,7 +153,7 @@ export function LeaderboardModal({ isOpen, onClose, token }: LeaderboardModalPro
                     {/* Solved Levels Badges */}
                     <div className="flex items-center gap-1.5">
                       {['level-0', 'level-1', 'level-2', 'level-3', 'level-4', 'level-5', 'level-6', 'level-7', 'level-8'].map((lvl, idx) => {
-                        const isSolved = entry.solvedLevels.includes(lvl as any);
+                        const isSolved = entry.solvedLevels.includes(lvl as LevelId);
                         return (
                           <span
                             key={lvl}

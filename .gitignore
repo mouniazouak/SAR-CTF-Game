@@ -19,6 +19,9 @@
 
 # production
 /build
+/build-output/
+/build-verify-*/
+/.next-verify/
 
 # misc
 .DS_Store
@@ -35,6 +38,10 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# Local NASA/NISAR source data (large files, kept out of Git)
+/data/raw/
+/data/processed/
 
 # typescript
 *.tsbuildinfo

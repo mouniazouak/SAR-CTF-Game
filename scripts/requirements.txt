@@ -1,0 +1,12 @@
+h5py
+numpy
+matplotlib
+pillow
+scikit-image
+scipy
+pyproj
+rasterio
+requests
+asf_search
+earthaccess
+jupyter

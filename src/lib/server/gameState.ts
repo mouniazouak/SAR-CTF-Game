@@ -1,4 +1,4 @@
-import { LevelId, PlayerSession, LeaderboardEntry, Challenge } from '@/types/ctf';
+import type { LevelId, PlayerSession, LeaderboardEntry, Challenge } from '@/types/ctf';
 import { GROUND_TRUTH_CHALLENGES, sanitizeChallengeForClient, verifyFlag } from './flags';
 
 // In-memory persistent state across server lifecycle

@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       nextLevelUnlocked: result.nextLevelUnlocked,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         success: false,
