@@ -260,12 +260,22 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
               backgroundImage: realBeforeUrl
                 ? `linear-gradient(rgba(6, 14, 23, 0.15), rgba(6, 14, 23, 0.15)), url(${realBeforeUrl})`
                 : 'radial-gradient(circle at 50% 50%, #1a2f42 0%, #0d1b28 60%, #060e17 100%)',
-              ...(realBeforeUrl ? { backgroundSize: 'cover', backgroundPosition: 'center' } : {}),
+              // Stretch the real image to the whole map so it matches pixelToLatLng (full bbox at default zoom),
+              // and zoom it with the same factor as the click coordinates.
+              ...(realBeforeUrl
+                ? {
+                    backgroundSize: '100% 100%',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    transform: `scale(${Math.pow(1.3, zoom - challenge.defaultZoom)})`,
+                    transformOrigin: 'center center',
+                  }
+                : {}),
               filter: 'contrast(1.15) brightness(0.95)',
             }}
           >
-            {/* Optical Topographic Simulation Grid */}
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="opacity-40">
+            {/* Optical Topographic Simulation Grid (hidden on real NISAR missions to keep the radar image clear) */}
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className={realBeforeUrl ? 'hidden' : 'opacity-40'}>
               <defs>
                 <pattern id="opticalGrid" width="60" height="60" patternUnits="userSpaceOnUse">
                   <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#254252" strokeWidth="0.8" />
@@ -276,7 +286,7 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
             </svg>
 
             {/* Geographical Landform contours */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-50">
+            <div className={`absolute inset-0 flex items-center justify-center pointer-events-none opacity-50 ${realBeforeUrl ? 'hidden' : ''}`}>
               <div className="w-[85%] h-[85%] rounded-full border border-slate-700/40 border-dashed" />
               <div className="absolute w-[60%] h-[60%] rounded-full border border-slate-700/30" />
               <div className="absolute w-[35%] h-[35%] rounded-full border border-slate-700/20" />
@@ -303,9 +313,9 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
             alt="SAR Overlay"
             fill
             unoptimized
-            className="w-full h-full object-cover select-none"
+            className={`w-full h-full select-none ${isRealMission ? 'object-fill' : 'object-contain'}`}
             style={{
-              transform: `scale(${Math.pow(1.05, zoom - challenge.defaultZoom)})`,
+              transform: `scale(${Math.pow(1.3, zoom - challenge.defaultZoom)})`,
               transformOrigin: 'center center',
             }}
           />
