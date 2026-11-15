@@ -10,7 +10,7 @@ interface GeminiForensicsAssistantProps {
 }
 
 export function GeminiForensicsAssistant({ challenge, sample }: GeminiForensicsAssistantProps) {
-  const [question, setQuestion] = useState('Que signifie cette signature SAR ?');
+  const [question, setQuestion] = useState('What does this SAR signature mean?');
   const [answer, setAnswer] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +63,7 @@ export function GeminiForensicsAssistant({ challenge, sample }: GeminiForensicsA
         <Sparkles className="w-3 h-3 ml-auto dark:text-amber-300 text-amber-600" />
       </div>
       <p className="text-[11px] leading-relaxed dark:text-slate-400 text-slate-600">
-        Assistant pédagogique : il explique les preuves publiques sans donner le flag.
+        Educational assistant: it explains public evidence without revealing the flag.
       </p>
       <textarea
         value={question}
@@ -71,7 +71,7 @@ export function GeminiForensicsAssistant({ challenge, sample }: GeminiForensicsA
         maxLength={500}
         rows={2}
         className="w-full rounded-md border p-2 text-xs resize-none focus:outline-none focus:ring-2 dark:bg-[#050912] dark:border-violet-900 dark:text-violet-100 dark:focus:ring-violet-500/40 bg-white border-violet-200 text-slate-900 focus:ring-violet-200"
-        aria-label="Question à Gemini"
+        aria-label="Question for Gemini"
       />
       <button
         type="button"
@@ -80,7 +80,7 @@ export function GeminiForensicsAssistant({ challenge, sample }: GeminiForensicsA
         className="w-full flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-mono font-bold text-white bg-violet-700 hover:bg-violet-600 disabled:opacity-50 cursor-pointer"
       >
         <Send className="w-3.5 h-3.5" />
-        {isLoading ? 'Analyse Gemini en cours...' : 'Demander une analyse'}
+        {isLoading ? 'Gemini analysis in progress...' : 'Request analysis'}
       </button>
       {answer && <div className="rounded-md border p-2.5 text-xs leading-relaxed whitespace-pre-wrap dark:bg-black/20 dark:border-violet-900 dark:text-slate-200 bg-white/80 border-violet-200 text-slate-800">{answer}</div>}
       {error && <div className="rounded-md border p-2.5 text-xs dark:bg-rose-950/30 dark:border-rose-800 dark:text-rose-200 bg-rose-50 border-rose-200 text-rose-800">{error}</div>}

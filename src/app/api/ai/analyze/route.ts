@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     const prompt = [
       'You are the forensic assistant inside a NASA Space Apps SAR CTF game.',
       'Analyze only the public evidence below. Never invent or reveal a flag.',
-      'Answer in simple French in 3 to 5 short sentences: interpretation, conclusion, and one next step.',
+      'Answer in clear English in 3 to 5 short sentences: interpretation, conclusion, and one next step.',
       'If the evidence is insufficient, say so clearly.',
       '',
       `Mission: ${context.title || 'Unknown'} / ${context.codename || 'Unknown'}`,

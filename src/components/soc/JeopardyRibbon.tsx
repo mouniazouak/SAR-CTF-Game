@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Challenge, LevelId } from '@/types/ctf';
 import {
   Lock,
@@ -10,8 +10,11 @@ import {
   Activity,
   Sliders,
   Sparkles,
+  Info,
+  X,
 } from 'lucide-react';
 import { soundFX } from '@/lib/audio';
+import { LEVEL_EXPLANATIONS } from '@/lib/level-explanations';
 
 interface JeopardyRibbonProps {
   challenges: Challenge[];
@@ -24,6 +27,7 @@ export function JeopardyRibbon({
   selectedLevelId,
   onSelectChallenge,
 }: JeopardyRibbonProps) {
+  const [explanationLevelId, setExplanationLevelId] = useState<LevelId | null>(null);
   const getLevelIcon = (id: LevelId) => {
     switch (id) {
       case 'level-0':
@@ -83,15 +87,23 @@ export function JeopardyRibbon({
             const isSolved = c.solved;
 
             return (
-              <button
+              <div
                 key={c.id}
-                disabled={isLocked}
                 onClick={() => {
                   if (!isLocked) {
                     soundFX.playRadarPing();
                     onSelectChallenge(c.id);
                   }
                 }}
+                onKeyDown={(event) => {
+                  if (!isLocked && (event.key === 'Enter' || event.key === ' ')) {
+                    event.preventDefault();
+                    soundFX.playRadarPing();
+                    onSelectChallenge(c.id);
+                  }
+                }}
+                role="button"
+                tabIndex={isLocked ? -1 : 0}
                 className={`group relative text-left p-3 rounded-lg border transition-all duration-200 overflow-hidden cursor-pointer ${
                   isSelected
                     ? 'dark:bg-gradient-to-br dark:from-cyan-950/90 dark:via-[#0d1e33] dark:to-[#071322] dark:border-cyan-400 dark:shadow-[0_0_20px_rgba(6,182,212,0.25)] dark:ring-1 dark:ring-cyan-400/50 bg-white border-sky-500 shadow-md ring-2 ring-sky-400/40'
@@ -132,7 +144,7 @@ export function JeopardyRibbon({
                   </div>
 
                   {/* Status Indicator */}
-                  <div>
+                  <div className="flex items-center gap-1">
                     {isSolved ? (
                       <span className="flex items-center gap-1 text-[11px] font-mono font-bold dark:text-emerald-400 dark:bg-emerald-950/80 dark:border-emerald-500/50 text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">
                         <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
@@ -149,6 +161,18 @@ export function JeopardyRibbon({
                         ACTIVE
                       </span>
                     )}
+                    <button
+                      type="button"
+                      aria-label={`Explain level ${c.levelNumber}`}
+                      title="Explain this level"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setExplanationLevelId(c.id);
+                      }}
+                      className="p-1 rounded border dark:text-cyan-300 dark:border-cyan-800 dark:hover:bg-cyan-950/80 text-sky-700 border-sky-300 hover:bg-sky-100"
+                    >
+                      <Info className="w-3 h-3" />
+                    </button>
                   </div>
                 </div>
 
@@ -191,11 +215,74 @@ export function JeopardyRibbon({
                     <span className="text-[9px] dark:text-slate-500 text-slate-400">PTS</span>
                   </div>
                 </div>
-              </button>
+              </div>
             );
           })}
         </div>
       </div>
+
+      {explanationLevelId && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm"
+          role="presentation"
+          onClick={() => setExplanationLevelId(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="level-explanation-title"
+            className="w-full max-w-xl rounded-xl border p-5 shadow-2xl dark:bg-[#081525] dark:border-cyan-700/70 bg-white border-sky-300 text-slate-900 dark:text-slate-100"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {(() => {
+              const challenge = challenges.find((item) => item.id === explanationLevelId);
+              const explanation = LEVEL_EXPLANATIONS[explanationLevelId];
+              if (!challenge) return null;
+              return (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-[10px] font-mono font-bold uppercase tracking-wider dark:text-cyan-400 text-sky-700">
+                        Level {challenge.levelNumber} • {challenge.difficulty}
+                      </p>
+                      <h2 id="level-explanation-title" className="mt-1 text-lg font-bold dark:text-white text-slate-900">
+                        {challenge.title}
+                      </h2>
+                      <p className="text-xs font-mono dark:text-slate-400 text-slate-500">{challenge.codename}</p>
+                    </div>
+                    <button
+                      type="button"
+                      aria-label="Close level explanation"
+                      onClick={() => setExplanationLevelId(null)}
+                      className="rounded-md p-1 dark:hover:bg-slate-800 hover:bg-slate-100"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  </div>
+                  <div className="mt-4 grid gap-3 text-sm">
+                    <section>
+                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">Mission objective</h3>
+                      <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.objective}</p>
+                    </section>
+                    <section>
+                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">Scientific concept</h3>
+                      <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.science}</p>
+                    </section>
+                    <section>
+                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">What to inspect</h3>
+                      <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.evidence}</p>
+                    </section>
+                    <section>
+                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">Skills practiced</h3>
+                      <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.skills}</p>
+                    </section>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
