@@ -7,6 +7,7 @@ import { JeopardyRibbon } from '@/components/soc/JeopardyRibbon';
 import { IncidentBriefingPanel } from '@/components/soc/IncidentBriefingPanel';
 import { GeospatialForensicsMap } from '@/components/soc/GeospatialForensicsMap';
 import { LeaderboardModal } from '@/components/soc/LeaderboardModal';
+import { MissionWelcome } from '@/components/soc/MissionWelcome';
 
 export default function ForensicWorkbenchPage() {
   const [token, setToken] = useState<string>('');
@@ -17,6 +18,7 @@ export default function ForensicWorkbenchPage() {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [hasBegunMission, setHasBegunMission] = useState<boolean>(false);
 
   // Initialize Theme (Eye-comfort Space Theme: Deep Orbit Dark vs Orbital Daylight)
   useEffect(() => {
@@ -187,6 +189,10 @@ export default function ForensicWorkbenchPage() {
         </div>
       </div>
     );
+  }
+
+  if (!hasBegunMission) {
+    return <MissionWelcome onBegin={() => setHasBegunMission(true)} />;
   }
 
   return (
