@@ -1,6 +1,16 @@
 import { NextResponse } from 'next/server';
+import { setDefaultResultOrder } from 'node:dns';
+
+// Some networks advertise a broken IPv6 route while IPv4 reaches Gemini.
+// Prefer IPv4 so server-side fetch does not hang on an unreachable AAAA record.
+setDefaultResultOrder('ipv4first');
 
 const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
+const DEFAULT_GEMINI_MODEL = 'gemini-3.5-flash-lite';
+const UNSUPPORTED_GEMINI_MODEL_ALIASES: Record<string, string> = {
+  // Early versions of .env.example used this ID, but Google does not publish it.
+  'gemini-3.8-flash-lite': DEFAULT_GEMINI_MODEL,
+};
 
 interface PublicChallengeContext {
   title?: string;
@@ -25,11 +35,24 @@ interface PublicChallengeContext {
   };
 }
 
+function resolveGeminiModel(): string {
+  const configured = process.env.GEMINI_MODEL?.trim();
+  if (!configured) {
+    return DEFAULT_GEMINI_MODEL;
+  }
+
+  return UNSUPPORTED_GEMINI_MODEL_ALIASES[configured] ?? configured;
+}
+
 export async function POST(request: Request) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { success: false, message: 'Gemini is not configured. Add GEMINI_API_KEY to .env.local.' },
+      {
+        success: false,
+        message:
+          'Gemini is not configured. Add GEMINI_API_KEY to .env.local in the project root and restart the server.',
+      },
       { status: 503 }
     );
   }
@@ -41,7 +64,10 @@ export async function POST(request: Request) {
     };
     const question = typeof body.question === 'string' ? body.question.trim() : '';
     if (!question || question.length > 500) {
-      return NextResponse.json({ success: false, message: 'Question is required and must be under 500 characters.' }, { status: 400 });
+      return NextResponse.json(
+        { success: false, message: 'Question is required and must be under 500 characters.' },
+        { status: 400 }
+      );
     }
 
     const context = body.challenge || {};
@@ -63,16 +89,33 @@ export async function POST(request: Request) {
       `Player question: ${question}`,
     ].join('\n');
 
-    const response = await fetch(`${GEMINI_ENDPOINT}/${process.env.GEMINI_MODEL || 'gemini-3.8-flash-lite'}:generateContent`, {
+    const model = resolveGeminiModel();
+    const generationConfig: Record<string, unknown> = {
+      temperature: 0.2,
+      maxOutputTokens: 512,
+      candidateCount: 1,
+    };
+
+    // Gemini 3 defaults to medium thinking, and thinking tokens count toward
+    // maxOutputTokens. Low thinking keeps the 3-5 sentence answer fast without
+    // consuming the whole output budget before the visible response starts.
+    if (model.startsWith('gemini-3.')) {
+      generationConfig.thinkingConfig = { thinkingLevel: 'LOW' };
+    }
+
+    const response = await fetch(`${GEMINI_ENDPOINT}/${model}:generateContent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'x-goog-api-key': apiKey,
       },
+      signal: AbortSignal.timeout(30000),
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: 'You are a concise, careful SAR forensics tutor. Do not provide flags.' }] },
+        systemInstruction: {
+          parts: [{ text: 'You are a concise, careful SAR forensics tutor. Do not provide flags.' }],
+        },
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 260, candidateCount: 1 },
+        generationConfig,
       }),
     });
 
@@ -87,13 +130,27 @@ export async function POST(request: Request) {
       );
     }
 
-    const answer = payload.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('').trim();
+    const answer = payload.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text || '')
+      .join('')
+      .trim();
     if (!answer) {
-      return NextResponse.json({ success: false, message: 'Gemini returned an empty analysis.' }, { status: 502 });
+      return NextResponse.json(
+        { success: false, message: 'Gemini returned an empty analysis.' },
+        { status: 502 }
+      );
     }
 
     return NextResponse.json({ success: true, answer });
-  } catch {
-    return NextResponse.json({ success: false, message: 'Unable to contact Gemini.' }, { status: 500 });
+  } catch (error) {
+    const timedOut =
+      error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
+    return NextResponse.json(
+      {
+        success: false,
+        message: timedOut ? 'Gemini timed out. Please try again.' : 'Unable to contact Gemini.',
+      },
+      { status: timedOut ? 504 : 500 }
+    );
   }
 }

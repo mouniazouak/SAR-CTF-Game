@@ -1,0 +1,103 @@
+{
+  "zone": "merja_zerga",
+  "name": "Merja Zerga lagoon, Morocco",
+  "label": "real NISAR data",
+  "bounds": [
+    [
+      34.776403,
+      -6.364777
+    ],
+    [
+      34.933579,
+      -6.194897
+    ]
+  ],
+  "crs": "EPSG:4326",
+  "scenes": [
+    {
+      "role": "before",
+      "granule": "NISAR_L2_PR_GCOV_034_023_D_071_4005_DHDH_A_20261025T191922_20261025T191959_P05036_N_F_J_001",
+      "datetime_utc": "2026-10-25T19:19:22Z",
+      "track": 23,
+      "frame": 71,
+      "direction": "Descending",
+      "polarization": "HH",
+      "product": "NISAR L2 GCOV, L-band, frequency A (10 m)"
+    },
+    {
+      "role": "after",
+      "granule": "NISAR_L2_PR_GCOV_035_023_D_071_4005_DHDH_A_20261106T191923_20261106T191959_P05036_N_F_J_001",
+      "datetime_utc": "2026-11-06T19:19:23Z",
+      "track": 23,
+      "frame": 71,
+      "direction": "Descending",
+      "polarization": "HH",
+      "product": "NISAR L2 GCOV, L-band, frequency A (10 m)"
+    }
+  ],
+  "layers": {
+    "before": {
+      "file": "before.png",
+      "description": "HH backscatter, BEFORE",
+      "range_db": [
+        -25,
+        0
+      ]
+    },
+    "after": {
+      "file": "after.png",
+      "description": "HH backscatter, AFTER",
+      "range_db": [
+        -25,
+        0
+      ]
+    },
+    "change": {
+      "file": "change.png",
+      "description": "AFTER - BEFORE (blue = darker, red = brighter)",
+      "range_db": [
+        -10,
+        10
+      ]
+    },
+    "water": {
+      "file": "water.png",
+      "description": "Class change (Multi-Otsu)",
+      "legend": {
+        "became_darker": "#1e78ff",
+        "became_brighter": "#ffa500"
+      }
+    },
+    "classes_before": {
+      "file": "classes_before.png",
+      "legend": {
+        "open_water": "#1e3cff",
+        "wet_low": "#2ec4b6"
+      }
+    },
+    "classes_after": {
+      "file": "classes_after.png",
+      "legend": {
+        "open_water": "#1e3cff",
+        "wet_low": "#2ec4b6"
+      }
+    }
+  },
+  "processing": {
+    "speckle_filter": "median 5x5",
+    "method": "Multi-Otsu, 3 classes (open water / wet-low / land)",
+    "thresholds_db": [
+      -17.0,
+      -11.0
+    ]
+  },
+  "results": {
+    "became_darker_pct": 1.05,
+    "became_brighter_pct": 9.08,
+    "median_change_db": 0.8,
+    "rain_between_scenes_mm": 25.0,
+    "conclusion": "After the first autumn rain, soils became brighter (wet soil reflects more), while the lagoon keeps its open-water core."
+  },
+  "source": "NISAR data courtesy of NASA/JPL-Caltech and ISRO, distributed by ASF DAAC.",
+  "weather_source": "Open-Meteo Historical Weather API"
+}

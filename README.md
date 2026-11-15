@@ -106,7 +106,7 @@ Copy `.env.example` to `.env.local`, then paste the Gemini API key created in Go
 copy .env.example .env.local
 ```
 
-The key is used only by `POST /api/ai/analyze` on the server and is never sent to the browser. The assistant receives public challenge evidence and explains the SAR reasoning without revealing flags. The default model is `gemini-3.8-flash`; restart `npm run dev` after changing `.env.local`.
+The key is used only by `POST /api/ai/analyze` on the server and is never sent to the browser. The assistant receives public challenge evidence and explains the SAR reasoning without revealing flags. The default model is `gemini-3.5-flash-lite`; restart `npm run dev` after changing `.env.local`.
 
 ---
 
