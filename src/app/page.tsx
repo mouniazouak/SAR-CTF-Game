@@ -179,6 +179,10 @@ export default function ForensicWorkbenchPage() {
   const selectedChallenge = challenges.find((c) => c.id === selectedLevelId) || challenges[0];
   const solvedCount = challenges.filter((c) => c.solved).length;
 
+  if (!hasBegunMission) {
+    return <MissionWelcome onBegin={() => setHasBegunMission(true)} />;
+  }
+
   if (isLoading || !selectedChallenge) {
     return (
       <div className="min-h-screen cosmic-space-bg flex flex-col items-center justify-center font-mono text-xs gap-3 p-4 transition-colors duration-300">
@@ -189,10 +193,6 @@ export default function ForensicWorkbenchPage() {
         </div>
       </div>
     );
-  }
-
-  if (!hasBegunMission) {
-    return <MissionWelcome onBegin={() => setHasBegunMission(true)} />;
   }
 
   return (

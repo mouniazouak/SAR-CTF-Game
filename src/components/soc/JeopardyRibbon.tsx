@@ -75,7 +75,7 @@ export function JeopardyRibbon({
             </h2>
           </div>
           <span className="text-[11px] font-mono dark:text-slate-400 text-slate-500 hidden sm:inline">
-            Solve each orbital pass to decrypt subsequent targets
+            Select a mission to play • click the info icon to read its briefing
           </span>
         </div>
 
