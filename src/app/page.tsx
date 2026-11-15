@@ -9,6 +9,7 @@ import { GeospatialForensicsMap } from '@/components/soc/GeospatialForensicsMap'
 import { LeaderboardModal } from '@/components/soc/LeaderboardModal';
 import { MissionWelcome } from '@/components/soc/MissionWelcome';
 import { DeepAnalysisArchive } from '@/components/soc/DeepAnalysisArchive';
+import { MissionModal } from '@/components/soc/MissionModal';
 
 export default function ForensicWorkbenchPage() {
   const [token, setToken] = useState<string>('');
@@ -20,6 +21,8 @@ export default function ForensicWorkbenchPage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [hasBegunMission, setHasBegunMission] = useState<boolean>(false);
+  const [showHowToPlay, setShowHowToPlay] = useState<boolean>(false);
+  const [nextLevelBriefingId, setNextLevelBriefingId] = useState<LevelId | null>(null);
 
   // Initialize Theme (Eye-comfort Space Theme: Deep Orbit Dark vs Orbital Daylight)
   useEffect(() => {
@@ -121,6 +124,8 @@ export default function ForensicWorkbenchPage() {
       fetchChallenges(token).then(() => {
         if (result.nextLevelUnlocked) {
           setSelectedLevelId(result.nextLevelUnlocked);
+          // Every completed level hands off to an automatic briefing for the next one.
+          setNextLevelBriefingId(result.nextLevelUnlocked);
         }
       });
     }
@@ -181,7 +186,7 @@ export default function ForensicWorkbenchPage() {
   const solvedCount = challenges.filter((c) => c.solved).length;
 
   if (!hasBegunMission) {
-    return <MissionWelcome onBegin={() => setHasBegunMission(true)} />;
+    return <MissionWelcome onBegin={() => { setHasBegunMission(true); setShowHowToPlay(true); }} />;
   }
 
   if (isLoading || !selectedChallenge) {
@@ -236,6 +241,7 @@ export default function ForensicWorkbenchPage() {
         </div>
       </main>
 
+      {/* Show the complete image comparison archive after every level is solved. */}
       {solvedCount === challenges.length && challenges.length > 0 && <DeepAnalysisArchive />}
 
       {/* Real-time Global Leaderboard Modal */}
@@ -244,6 +250,19 @@ export default function ForensicWorkbenchPage() {
         onClose={() => setIsLeaderboardOpen(false)}
         token={token}
       />
+
+      {showHowToPlay && selectedLevelId === 'level-0' && (
+        <MissionModal mode="how-to-play" onClose={() => setShowHowToPlay(false)} />
+      )}
+
+      {nextLevelBriefingId && (
+        <MissionModal
+          mode="level-explanation"
+          levelId={nextLevelBriefingId}
+          challenge={challenges.find((challenge) => challenge.id === nextLevelBriefingId)}
+          onClose={() => setNextLevelBriefingId(null)}
+        />
+      )}
     </div>
   );
 }

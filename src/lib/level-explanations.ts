@@ -3,63 +3,20 @@ import type { LevelId } from '@/types/ctf';
 export interface LevelExplanation {
   objective: string;
   science: string;
+  steps: string[];
   evidence: string;
+  result: string;
   skills: string;
 }
 
 export const LEVEL_EXPLANATIONS: Record<LevelId, LevelExplanation> = {
-  'level-0': {
-    objective: 'Find the radiometric calibration target at Rosamond Dry Lake.',
-    science: 'A trihedral corner reflector produces a very strong, stable radar return and is used to calibrate SAR measurements.',
-    evidence: 'Look for the localized backscatter peak and confirm the target coordinates with the live sampler.',
-    skills: 'Radar backscatter, point targets, calibration, and geographic sampling.',
-  },
-  'level-1': {
-    objective: 'Determine whether the dark feature near Manises Airport is floodwater or a smooth runway surface.',
-    science: 'Smooth surfaces can appear dark in SAR imagery because they reflect energy away from the sensor. Darkness alone does not prove flooding.',
-    evidence: 'Compare the before/after scenes, surface response, and contextual weather information.',
-    skills: 'SAR interpretation, false-alarm analysis, and evidence-based classification.',
-  },
-  'level-2': {
-    objective: 'Assess the radar change caused by the Jasper wildfire.',
-    science: 'A fire can remove or alter vegetation structure, causing a strong loss of temporal coherence between acquisitions.',
-    evidence: 'Use the coherence value and the burn-scar pattern to separate vegetation change from normal radar variation.',
-    skills: 'Coherence analysis, wildfire mapping, and change detection.',
-  },
-  'level-3': {
-    objective: 'Estimate crustal displacement across the Ridgecrest fault zone.',
-    science: 'InSAR phase fringes encode line-of-sight movement. Each full fringe represents a fraction of the radar wavelength.',
-    evidence: 'Count the phase fringes and relate them to the stated wavelength and displacement measurement.',
-    skills: 'Interferometry, phase interpretation, wavelength physics, and tectonic monitoring.',
-  },
-  'level-4': {
-    objective: 'Reconstruct the evidence trail of a corrupted NISAR ground-data relay package.',
-    science: 'Mission data integrity depends on consistent timestamps, checksums, metadata, and visual products.',
-    evidence: 'Cross-check the timeline, package metadata, checksum clues, and the associated SAR evidence.',
-    skills: 'Mission data forensics, metadata correlation, and integrity checking.',
-  },
-  'level-5': {
-    objective: 'Identify a simulated phishing attempt targeting mission operations staff.',
-    science: 'Social-engineering messages often combine urgency, unusual sender details, and requests that bypass normal procedures.',
-    evidence: 'Inspect the sender, links, wording, requested action, and mission-control context before reaching a conclusion.',
-    skills: 'Email forensics, threat awareness, and security decision-making.',
-  },
-  'level-6': {
-    objective: 'Find the simulated public-read configuration exposing an Earth-observation archive.',
-    science: 'Access-control errors can expose sensitive metadata even when the underlying imagery is not modified.',
-    evidence: 'Compare the intended access policy with the observed permissions and identify the unsafe setting.',
-    skills: 'Cloud configuration review, least privilege, and data protection.',
-  },
-  'level-7': {
-    objective: 'Reconstruct a simulated unauthorized telemetry session.',
-    science: 'A reliable incident timeline links authentication events, source information, session actions, and anomalies.',
-    evidence: 'Order the log events chronologically and distinguish normal ground-station activity from the intrusion indicators.',
-    skills: 'Log analysis, timeline reconstruction, and incident response.',
-  },
-  'level-8': {
-    objective: 'Identify the modified asset in a simulated public mission-status portal.',
-    science: 'Integrity monitoring detects unexpected changes by comparing trusted and current versions of public assets.',
-    evidence: 'Compare the snapshots, metadata, checksums, and visible content to locate the tampered mission asset.',
-    skills: 'Web integrity, snapshot comparison, and digital forensics.',
-  },
+  'level-0': { objective: 'Locate the calibration reflector at Rosamond Dry Lake and confirm that the radar point is a trihedral reflector.', science: 'A trihedral reflector sends radar energy back to the satellite through triple reflection. It appears as a bright, stable point unlike the darker dry ground.', steps: ['Center the map on Rosamond Dry Lake and inspect radar backscatter (sigma nought).', 'Find the intense point spike near +24.8 dB inside the darker lake bed.', 'Sample the point to confirm its coordinates, high coherence, and zero displacement.', 'Reconstruct the flag using the calibration point identifier.'], evidence: 'The correct target is a localized, very bright and coherent point near 34.8722°N, -118.1564°W.', result: 'This level teaches point-target recognition and establishes the calibration workflow for later change analysis.', skills: 'SAR backscatter, sigma0, point targets, coherence, and geographic sampling.' },
+  'level-1': { objective: 'Determine whether the dark area near Manises Airport is new floodwater or simply a smooth runway.', science: 'Smooth surfaces such as calm water and runways reflect radar energy away from the satellite. Both can look dark, so a dark image alone cannot prove flooding.', steps: ['Start from the NISAR HDF5 scenes and select the HH measurement layer.', 'Convert radar values to dB, mask invalid values, and crop the study area.', 'Export readable views as before.png and after.png, then create change.png to visualize the difference.', 'Read each scene metadata: date, track, frame, polarization, and pass direction.', 'Check the geometry before comparing: the scenes use Ascending and Descending directions, so the comparison must remain visual and cautious.', 'Compare the shape and position of the dark area, then cross-check the result with weather and airport context.', 'Reject the flood hypothesis if the signature matches a stable runway and rainfall does not support new water.'], evidence: 'The PNG views, change layer, low rainfall, and regular runway shape support a radar false alarm rather than a new flood.', result: 'This level demonstrates the full workflow: HDF5 → dB → PNG → geometry check → before/after comparison → interpretation.', skills: 'HDF5 preprocessing, dB conversion, PNG export, SAR metadata, multi-date comparison, and false-alarm analysis.' },
+  'level-2': { objective: 'Map the high-severity burn area in Jasper and confirm that it represents forest-cover loss.', science: 'Before the fire, branches and needles create volume scattering and moderate temporal coherence. After the fire, that structure disappears: HV backscatter decreases and coherence collapses.', steps: ['Compare before and after acquisitions over the same area and locate the connected burn perimeter.', 'Inspect HV polarization, which is especially sensitive to vertical vegetation structure.', 'Measure temporal coherence: a value near 0.14 indicates strong decorrelation.', 'Confirm that the signal and coherence loss form a continuous area rather than an isolated pixel.', 'Rule out temporary moisture, snow, or cloud effects, then sample the center of the burn scar.'], evidence: 'The target combines severe coherence loss, reduced HV, and a connected burn-scar shape near 52.8732°N, -118.0821°W.', result: 'The evidence supports fire-driven destruction of forest structure rather than a short-lived weather variation.', skills: 'Polarimetry, InSAR coherence, burn-scar mapping, temporal comparison, and spatial validation.' },
+  'level-3': { objective: 'Measure ground displacement along the Ridgecrest fault using InSAR fringes.', science: 'Radar phase encodes displacement along the line of sight. With a 24 cm L-band wavelength, one complete fringe equals λ/2, or 12 cm of LOS displacement.', steps: ['Display the differential interferogram and locate the colored fringes crossing the rupture.', 'Count complete phase cycles between the two sides of the fault.', 'Convert the fringe count to displacement: 1 fringe = 12 cm, so 4 fringes = 48 cm.', 'Check that the pattern is spatially coherent and aligned with the tectonic trace.', 'Sample the main rupture and use the measurement to reconstruct the flag.'], evidence: 'Four complete cycles converge on the main rupture, giving approximately 48 cm of line-of-sight displacement.', result: 'This level converts a color fringe pattern into a physical crustal-deformation measurement.', skills: 'Interferometry, phase, fringes, wavelength, LOS displacement, and tectonic interpretation.' },
+  'level-4': { objective: 'Reconstruct the manipulation of a SAR data package in the ground relay and prove which item was altered.', science: 'Reliable mission data requires a consistent timeline, compatible metadata, and a checksum matching the approved manifest.', steps: ['Sort access events and logs by time to rebuild the sequence.', 'Identify the unusual session that occurs before the suspicious package is registered.', 'Compare calculated checksums with the trusted manifest checksum.', 'Compare image metadata: acquisition date, pass direction, filename, and measurement layer.', 'Read the visual evidence and assemble the fragments in chronological order.'], evidence: 'The altered package has a checksum mismatch and metadata drift.', result: 'The level teaches that file tampering is proven by correlated evidence, not by one clue alone.', skills: 'Forensic timelines, checksums, metadata, event correlation, and data integrity.' },
+  'level-5': { objective: 'Detect a phishing email impersonating a mission collaborator and extract clues without opening external links.', science: 'Phishing often combines a familiar name, a look-alike domain, artificial urgency, and a request that bypasses normal procedures.', steps: ['Read the real sender and compare it with the display name and trusted domain.', 'Inspect headers and the receive timeline to identify the message origin.', 'Analyze the link, attachment, and request without executing them.', 'Compare the request with the normal Mission Control workflow.', 'Combine the header fragment with the remaining evidence fragments.'], evidence: 'The domain contains a subtle variation and the request falls outside the normal mission process.', result: 'This level teaches evidence-based decisions using headers and context instead of trusting the visible sender name.', skills: 'Email forensics, header analysis, impersonation detection, and security awareness.' },
+  'level-6': { objective: 'Find the misconfiguration that makes a SAR archive path publicly readable.', science: 'Least privilege means granting access only to the required mission role. An anonymous rule can expose metadata even when imagery is not modified.', steps: ['Read the intended policy and identify the role that should be authorized.', 'Compare it with the effective policy applied to each path.', 'Find the anonymous principal or public-read permission.', 'Separate the access-control problem from encryption: the flaw is in the resource permission.', 'Use the safe challenge record to recover the exposed metadata flag fragment.'], evidence: 'One archive path is available to everyone instead of being restricted to the mission role.', result: 'The level shows how comparing intended and effective policies reveals a data-exposure risk.', skills: 'Cloud security, IAM, least privilege, policy review, and metadata protection.' },
+  'level-7': { objective: 'Reconstruct an unauthorized telemetry session and link it to the modified package.', science: 'An intrusion is understood through correlation: login time, service identity, source, actions, and request ID.', steps: ['Sort all authentication events chronologically.', 'Find a session outside the expected satellite-pass window.', 'Compare service identities and isolate the one never seen in normal activity.', 'Follow its request ID to the package-modification event.', 'Separate normal logins from the session that explains the change.'], evidence: 'The suspicious session uses a new identity, occurs outside the pass window, and shares a request ID with the altered package.', result: 'This level teaches how to build an incident timeline and connect an access event to its concrete impact.', skills: 'Log analysis, identifier correlation, anomaly detection, and incident response.' },
+  'level-8': { objective: 'Identify the modified asset on the public mission portal and produce the final integrity proof.', science: 'Visual comparison can miss subtle edits. Hashes, the release manifest, and the change log provide objective integrity evidence.', steps: ['Compare the trusted snapshot with the current snapshot.', 'Compare every asset hash with the last approved release manifest.', 'Find the asset with a different hash and check its modification time.', 'Match the time to the change log and verify it is outside the approved deployment window.', 'Read the integrity report and assemble the final flag fragment.'], evidence: 'One asset has a hash different from the approved manifest and was changed after the last approved deployment.', result: 'The final level combines snapshots, hashes, and a change log to prove web defacement.', skills: 'Web integrity, hashing, snapshot comparison, log analysis, and incident response.' },
 };

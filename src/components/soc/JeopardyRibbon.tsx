@@ -75,7 +75,7 @@ export function JeopardyRibbon({
             </h2>
           </div>
           <span className="text-[11px] font-mono dark:text-slate-400 text-slate-500 hidden sm:inline">
-            Select a mission to play • click the info icon to read its briefing
+            Select a mission • click the info icon to read its briefing
           </span>
         </div>
 
@@ -259,7 +259,7 @@ export function JeopardyRibbon({
                       <X className="h-5 w-5" />
                     </button>
                   </div>
-                  <div className="mt-4 grid gap-3 text-sm">
+                  <div className="mt-4 grid gap-4 text-sm">
                     <section>
                       <h3 className="font-semibold dark:text-cyan-300 text-sky-700">Mission objective</h3>
                       <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.objective}</p>
@@ -269,8 +269,23 @@ export function JeopardyRibbon({
                       <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.science}</p>
                     </section>
                     <section>
-                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">What to inspect</h3>
+                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">Analysis steps</h3>
+                      <ol className="mt-2 space-y-2 dark:text-slate-300 text-slate-700">
+                        {explanation.steps.map((step, index) => (
+                          <li key={step} className="flex gap-2 leading-relaxed">
+                            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-cyan-600/20 font-mono text-[10px] font-bold dark:text-cyan-300 text-sky-700">{index + 1}</span>
+                            <span>{step}</span>
+                          </li>
+                        ))}
+                      </ol>
+                    </section>
+                    <section>
+                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">Expected evidence</h3>
                       <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.evidence}</p>
+                    </section>
+                    <section>
+                      <h3 className="font-semibold dark:text-cyan-300 text-sky-700">What you learn</h3>
+                      <p className="mt-1 leading-relaxed dark:text-slate-300 text-slate-700">{explanation.result}</p>
                     </section>
                     <section>
                       <h3 className="font-semibold dark:text-cyan-300 text-sky-700">Skills practiced</h3>
