@@ -313,7 +313,7 @@ export function GeospatialForensicsMap({ challenge }: GeospatialForensicsMapProp
             alt="SAR Overlay"
             fill
             unoptimized
-            className={`w-full h-full select-none ${isRealMission ? 'object-fill' : 'object-contain'}`}
+            className={`w-full h-full select-none ${isRealMission ? 'object-fill' : 'object-cover'}`}
             style={{
               transform: `scale(${Math.pow(1.3, zoom - challenge.defaultZoom)})`,
               transformOrigin: 'center center',
