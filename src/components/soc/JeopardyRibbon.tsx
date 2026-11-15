@@ -231,7 +231,7 @@ export function JeopardyRibbon({
             role="dialog"
             aria-modal="true"
             aria-labelledby="level-explanation-title"
-            className="w-full max-w-xl rounded-xl border p-5 shadow-2xl dark:bg-[#081525] dark:border-cyan-700/70 bg-white border-sky-300 text-slate-900 dark:text-slate-100"
+            className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-xl border p-5 shadow-2xl dark:bg-[#081525] dark:border-cyan-700/70 bg-white border-sky-300 text-slate-900 dark:text-slate-100"
             onClick={(event) => event.stopPropagation()}
           >
             {(() => {

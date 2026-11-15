@@ -8,6 +8,7 @@ import { IncidentBriefingPanel } from '@/components/soc/IncidentBriefingPanel';
 import { GeospatialForensicsMap } from '@/components/soc/GeospatialForensicsMap';
 import { LeaderboardModal } from '@/components/soc/LeaderboardModal';
 import { MissionWelcome } from '@/components/soc/MissionWelcome';
+import { DeepAnalysisArchive } from '@/components/soc/DeepAnalysisArchive';
 
 export default function ForensicWorkbenchPage() {
   const [token, setToken] = useState<string>('');
@@ -234,6 +235,8 @@ export default function ForensicWorkbenchPage() {
           <GeospatialForensicsMap challenge={selectedChallenge} />
         </div>
       </main>
+
+      {solvedCount === challenges.length && challenges.length > 0 && <DeepAnalysisArchive />}
 
       {/* Real-time Global Leaderboard Modal */}
       <LeaderboardModal
