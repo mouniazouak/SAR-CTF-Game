@@ -99,6 +99,15 @@ npx tsx test-engine.mjs
 ```
 Runs 30 automated integration assertions covering flag verification, hint deductions, progressive unlocking, and microwave forensics calculations.
 
+### 5. Configure the Gemini Forensics Assistant
+Copy `.env.example` to `.env.local`, then paste the Gemini API key created in Google AI Studio into `GEMINI_API_KEY`:
+
+```bash
+copy .env.example .env.local
+```
+
+The key is used only by `POST /api/ai/analyze` on the server and is never sent to the browser. The assistant receives public challenge evidence and explains the SAR reasoning without revealing flags. Restart `npm run dev` after changing `.env.local`.
+
 ---
 
 ## 🔄 CI / Automated Build Verification

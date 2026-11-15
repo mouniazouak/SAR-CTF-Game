@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Challenge, FlagSubmissionResult, HintRevealResult } from '@/types/ctf';
+import { Challenge, FlagSubmissionResult, HintRevealResult, ForensicSample } from '@/types/ctf';
 import {
   Satellite,
   Compass,
@@ -18,7 +18,9 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { soundFX } from '@/lib/audio';
+import { sampleForensics } from '@/lib/sar-forensics';
 import confetti from 'canvas-confetti';
+import { GeminiForensicsAssistant } from '@/components/soc/GeminiForensicsAssistant';
 
 interface IncidentBriefingPanelProps {
   challenge: Challenge;
@@ -59,6 +61,11 @@ export function IncidentBriefingPanel({
   ]);
 
   const logsEndRef = useRef<HTMLDivElement>(null);
+  const [activeSample, setActiveSample] = useState<ForensicSample | null>(null);
+
+  useEffect(() => {
+    setActiveSample(sampleForensics(challenge.id, challenge.targetAnomaly.lat, challenge.targetAnomaly.lng));
+  }, [challenge]);
 
   useEffect(() => {
     const messages = [
@@ -352,6 +359,8 @@ export function IncidentBriefingPanel({
             </div>
           )}
         </div>
+
+        <GeminiForensicsAssistant challenge={challenge} sample={activeSample} />
 
         {/* Tactical Hints Section */}
         <div className="space-y-2">
