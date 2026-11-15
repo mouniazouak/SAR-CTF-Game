@@ -1,0 +1,32 @@
+{
+  "targetLocation": "Merja Zerga lagoon, Moulay Bousselham, Morocco",
+  "regionCenter": [
+    34.855,
+    -6.2798
+  ],
+  "defaultZoom": 12,
+  "boundingBox": {
+    "north": 34.9336,
+    "south": 34.7764,
+    "east": -6.1949,
+    "west": -6.3648
+  },
+  "satellite": {
+    "mission": "NISAR (NASA-ISRO SAR)",
+    "sensor": "L-SAR, GCOV frequency A (40 MHz)",
+    "frequencyGhz": 1.25,
+    "wavelengthCm": 24.0,
+    "polarization": "Dual-Pol (HH + HV)",
+    "passDirection": "Descending",
+    "lookAngleDeg": 45.7,
+    "acquisitionDate": "2026-10-25T19:19:22Z",
+    "repeatPassDays": 12,
+    "groundResolutionM": 10.0
+  },
+  "dataProducts": [
+    "NISAR L2 GCOV HH, 2026-10-25 (track 23, Descending)",
+    "NISAR L2 GCOV HH, 2026-11-06 (track 23, Descending)",
+    "Multi-Otsu classes (open water / wet-low / land) and change map",
+    "Open-Meteo daily precipitation (25.0 mm between the two dates)"
+  ]
+}
