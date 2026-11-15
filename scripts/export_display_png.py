@@ -1,4 +1,4 @@
-"""Export clearer before/after PNGs for the game (false color HH / HV / HH-HV).
+"""Export clearer before/after PNGs for the game (grayscale HH by default, --color for HH / HV / HH-HV).
 
 Same crop and same lat/lon grid as the notebooks, so the bounds in metadata.json stay valid.
 Usage (from the scripts/ folder):  python export_display_png.py [output_dir_root]
@@ -81,14 +81,22 @@ def export_zone(zone, out_root):
 
     for role in ("before", "after"):
         bands = layers[role]
-        rgb = np.dstack([stretch(np.nan_to_num(b, nan=lo), lo, hi) for b, (lo, hi) in zip(bands, limits)])
+        if COLOR:
+            rgb = np.dstack([stretch(np.nan_to_num(b, nan=lo), lo, hi) for b, (lo, hi) in zip(bands, limits)])
+        else:   # grayscale HH: dark = water, bright = buildings (easiest to read)
+            lo, hi = limits[0]
+            gray = stretch(np.nan_to_num(bands[0], nan=lo), lo, hi)
+            rgb = np.dstack([gray, gray, gray])
         rgb = (rgb ** 0.8 * 255).astype("uint8")                       # slight gamma: brighter mid-tones
         alpha = np.where(np.isnan(bands[0]), 0, 255).astype("uint8")
         Image.fromarray(np.dstack([rgb, alpha])).save(f"{out_root}/{zone}/{role}.png")
         print(f"{zone}/{role}.png", rgb.shape[:2])
 
 
+COLOR = "--color" in sys.argv     # default: clear grayscale HH; --color: false color HH / HV / HH-HV
+
 if __name__ == "__main__":
-    out_root = sys.argv[1] if len(sys.argv) > 1 else "../public/data"
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    out_root = args[0] if args else "../public/data"
     for zone in ZONES:
         export_zone(zone, out_root)
