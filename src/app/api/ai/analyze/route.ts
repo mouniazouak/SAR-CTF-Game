@@ -48,13 +48,13 @@ export async function POST(request: Request) {
     const prompt = [
       'You are the forensic assistant inside a NASA Space Apps SAR CTF game.',
       'Analyze only the public evidence below. Never invent or reveal a flag.',
-      'Explain the reasoning in simple French, with a short conclusion and one next investigation step.',
+      'Answer in simple French in 3 to 5 short sentences: interpretation, conclusion, and one next step.',
       'If the evidence is insufficient, say so clearly.',
       '',
       `Mission: ${context.title || 'Unknown'} / ${context.codename || 'Unknown'}`,
       `Category: ${context.category || 'Unknown'}`,
       `Location: ${context.targetLocation || 'Unknown'}`,
-      `Satellite: ${JSON.stringify(context.satellite || {})}`,
+      `Satellite: ${JSON.stringify({ mission: context.satellite?.mission, sensor: context.satellite?.sensor, polarization: context.satellite?.polarization, frequencyGhz: context.satellite?.frequencyGhz })}`,
       `Briefing: ${context.scenarioBriefing || ''}`,
       `Objective: ${context.forensicMission || ''}`,
       `Clue: ${context.samplingClue || ''}`,
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       `Player question: ${question}`,
     ].join('\n');
 
-    const response = await fetch(`${GEMINI_ENDPOINT}/${process.env.GEMINI_MODEL || 'gemini-2.5-flash'}:generateContent`, {
+    const response = await fetch(`${GEMINI_ENDPOINT}/${process.env.GEMINI_MODEL || 'gemini-3.8-flash-lite'}:generateContent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: 'You are a concise, careful SAR forensics tutor. Do not provide flags.' }] },
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.25, maxOutputTokens: 500 },
+        generationConfig: { temperature: 0.2, maxOutputTokens: 260, candidateCount: 1 },
       }),
     });
 
